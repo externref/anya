@@ -93,11 +93,11 @@ async def on_spawn(event: hikari.GuildMessageCreateEvent) -> None:
         return
     await asyncio.sleep(random.randint(50, 200) / 100)
     embed = hikari.Embed(
-        role.mention,
         color=plugin.bot.colors.purple,
         description=f"`{embed.title}` : `Tier {tier}` just spawned.",
     )
     await event.get_channel().send(
+        role.mention,
         embed=embed,
         role_mentions=True,
     )
