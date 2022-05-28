@@ -69,7 +69,7 @@ class Bot(lightbulb.BotApp):
             user=os.getenv("MYSQLUSER"),
             db=os.getenv("MYSQLDATABASE"),
             password=os.getenv("MYSQLPASSWORD"),
-            port=os.getenv("MYSQLPORT"),
+            port=int(os.getenv("MYSQLPORT")),
             loop=asyncio.get_event_loop(),
             autocommit=False,
         )  # getting configs from the .env file and setting up the database
