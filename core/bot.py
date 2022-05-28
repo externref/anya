@@ -8,6 +8,7 @@ import dotenv
 import hikari
 import lightbulb
 from database.prefixes import PrefixDatabase
+from database.rolepings import RolePingHandler
 
 from .colors import Colors
 
@@ -37,7 +38,9 @@ class Bot(lightbulb.BotApp):
         dotenv.load_dotenv()  # loading enviromental variables in the project
         super().__init__(
             token=os.getenv("TOKEN"),
-            prefix=self.get_prefix,  # dynamic `get_prefix` function
+            prefix=lightbulb.when_mentioned_or(
+                self.get_prefix
+            ),  # dynamic `get_prefix` function
             intents=hikari.Intents(
                 hikari.Intents.ALL_UNPRIVILEGED
                 | hikari.Intents.ALL_MESSAGES  # adding message intents
@@ -47,6 +50,9 @@ class Bot(lightbulb.BotApp):
         self.prefix_db = (
             PrefixDatabase()
         )  # initialising PrefixDatabase, setup will be called later
+        self.role_pings = (
+            RolePingHandler()
+        )  # Class for handling role pings on card spawns.
         self.load_extensions_from("extensions")  # loading all bot extensions
         self.load_extensions("lightbulb.ext.filament.exts.superuser")
         self.event_manager.subscribe(
@@ -77,6 +83,7 @@ class Bot(lightbulb.BotApp):
         await self.prefix_db.setup(
             self
         )  # this function adds all important attributes to the PrefixDatabase class
+        await self.role_pings.setup(self)  # setting up the RolePingHandler class
 
     async def get_prefix(self, bot: "Bot", message: hikari.Message) -> str:
         """
