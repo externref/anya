@@ -90,7 +90,8 @@ async def on_spawn(event: hikari.GuildMessageCreateEvent) -> None:
         return
 
     await event.get_channel().send(
-        f"{role.mention} | `{embed.title}` : `Tier {tier}` just spawned."
+        f"{role.mention} | `{embed.title}` : `Tier {tier}` just spawned.",
+        role_mentions=True,
     )
 
 
