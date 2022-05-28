@@ -1,8 +1,11 @@
 from __future__ import annotations
+import random
 
 import hikari
 import lightbulb
 from core.bot import Bot
+
+import asyncio
 
 
 class Plugin(lightbulb.Plugin):
@@ -88,9 +91,14 @@ async def on_spawn(event: hikari.GuildMessageCreateEvent) -> None:
     role = plugin.bot.cache.get_role(role_id)
     if not role:
         return
-
+    await asyncio.sleep(random.randint(50, 200) / 100)
+    embed = hikari.Embed(
+        role.mention,
+        color=plugin.bot.colors.purple,
+        description=f"`{embed.title}` : `Tier {tier}` just spawned.",
+    )
     await event.get_channel().send(
-        f"{role.mention} | `{embed.title}` : `Tier {tier}` just spawned.",
+        embed=embed,
         role_mentions=True,
     )
 
