@@ -56,7 +56,6 @@ def check_tier(embed: hikari.Embed) -> int:
         :class:`int`
 
     """
-    print(embed.color.__int__())
     if embed.color.__int__() == 16777215:
         return 1
     elif embed.color.__int__() == 8060813:
@@ -77,10 +76,22 @@ async def on_spawn(event: hikari.GuildMessageCreateEvent) -> None:
         return
     if len(event.message.embeds) == 0:
         return
-    if not is_spawn_card(event.message.embeds[0]):
+    embed = event.message.embeds[0]
+    if not is_spawn_card(embed):
         return
 
-    # TODO: make spawns
+    tier = check_tier(embed)
+    role_id = await plugin.bot.role_pings.get_role(tier, event.guild_id)
+
+    if not role_id:
+        return
+    role = plugin.bot.cache.get_role(role_id)
+    if not role:
+        return
+
+    await event.get_channel().send(
+        f"{role.mention} | `{embed.title}` : `Tier {tier}` just spawned."
+    )
 
 
 def load(bot: Bot) -> None:
