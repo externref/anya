@@ -48,6 +48,7 @@ class Bot(lightbulb.BotApp):
             PrefixDatabase()
         )  # initialising PrefixDatabase, setup will be called later
         self.load_extensions_from("extensions")  # loading all bot extensions
+        self.load_extensions("lightbulb.ext.filament.exts.superuser")
         self.event_manager.subscribe(
             hikari.StartedEvent, self.get_databases_ready
         )  # triggering an coroutine on hikari.StartedEvent
