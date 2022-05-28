@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "anyaa"
+version = "0.0.1"
+description = "A discord bot that pings roles on shoob card spawns."
+authors = ["sarthhh <shiva02939@gmail.com>"]
+license = "GNU GENERAL PUBLIC LICENSE"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.11"
+hikari = "^2.0.0-alpha.108"
+hikari-lightbulb = "^2.2.1"
+aiomysql = "^0.1.1"
+uvloop = "^0.16.0"
+python-dotenv = "^0.20.0"
+lightbulb-ext-filament = {git = "https://github.com/tandemdude/lightbulb-ext-filament"}
+
+[tool.poetry.dev-dependencies]
+black = "^22.3.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
