@@ -88,8 +88,8 @@ class PrefixDatabase:
                 )
                 data = await cursor.fetchone()
         if data:
-            self.prefix_cache[guild_id] = data[0]
-            return data[0]  # cache-ing and returning custom prefix
+            self.prefix_cache[guild_id] = data[1]
+            return data[1]  # cache-ing and returning custom prefix
         else:
             self.prefix_cache[guild_id] = "a!"
             return "a!"  # cache-ing and returning default prefix
