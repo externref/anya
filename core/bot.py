@@ -2,15 +2,16 @@ from __future__ import annotations
 
 import asyncio
 import os
+from re import A
 
 import aiomysql
 import dotenv
 import hikari
 import lightbulb
 from database.prefixes import PrefixDatabase
-from database.rolepings import RolePingHandler
 
 from .colors import Colors
+from database.as_cards import ShoobCardDatabase
 
 
 class Bot(lightbulb.BotApp):
@@ -50,9 +51,7 @@ class Bot(lightbulb.BotApp):
         self.prefix_db = (
             PrefixDatabase()
         )  # initialising PrefixDatabase, setup will be called later
-        self.role_pings = (
-            RolePingHandler()
-        )  # Class for handling role pings on card spawns.
+        self.cards_db = ShoobCardDatabase()  # initialising class for shoob bot cards
         self.load_extensions_from("extensions")  # loading all bot extensions
         self.load_extensions("lightbulb.ext.filament.exts.superuser")
         self.event_manager.subscribe(
@@ -83,7 +82,9 @@ class Bot(lightbulb.BotApp):
         await self.prefix_db.setup(
             self
         )  # this function adds all important attributes to the PrefixDatabase class
-        await self.role_pings.setup(self)  # setting up the RolePingHandler class
+        await self.cards_db.setup(
+            self
+        )  # addding table to the database if it already doesnt exist.
 
     async def get_prefix(self, bot: "Bot", message: hikari.Message) -> str:
         """
