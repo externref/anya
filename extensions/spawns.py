@@ -1,11 +1,8 @@
 from __future__ import annotations
-import random
 
 import hikari
 import lightbulb
 from core.bot import Bot
-
-import asyncio
 
 
 class Plugin(lightbulb.Plugin):
@@ -13,6 +10,7 @@ class Plugin(lightbulb.Plugin):
         super().__init__("Spawns")
         self.ignored = True
         self.bot: Bot
+        self.spawn_cards: dict[int, hikari.Embed] = {}
 
 
 plugin = Plugin()
@@ -82,25 +80,79 @@ async def on_spawn(event: hikari.GuildMessageCreateEvent) -> None:
     embed = event.message.embeds[0]
     if not is_spawn_card(embed):
         return
+    plugin.spawn_cards[event.channel_id] = embed
+    try:
+        event_2: hikari.GuildMessageCreateEvent = await plugin.bot.wait_for(
+            hikari.GuildMessageCreateEvent,
+            predicate=lambda e: e.channel_id == event.channel_id
+            and e.author_id == event.author_id
+            and len(e.message.embeds) > 0
+            and e.message.embeds[0].description.__contains__("got the"),
+            timeout=60,
+        )
+        await plugin.bot.cards_db.insert_spawn_data(
+            event.guild_id,
+            event.message.created_at.timestamp().__int__(),
+            embed.title,
+            check_tier(embed),
+            int(
+                event_2.message.embeds[0]
+                .description.split("#:")[1]
+                .replace(".", "")
+                .replace("`", "")
+            ),
+            int(
+                event_2.message.embeds[0]
+                .description.split(">")[0]
+                .replace("!", "")
+                .replace("@", "")
+                .replace("<", "")
+            ),
+        )
+    except __import__("asyncio").TimeoutError:
+        await plugin.bot.cards_db.insert_spawn_data(
+            event.guild_id,
+            event.message.created_at.timestamp().__int__(),
+            embed.title,
+            check_tier(embed),
+        )
+    plugin.spawn_cards.pop(event.channel_id)
 
-    tier = check_tier(embed)
-    role_id = await plugin.bot.role_pings.get_role(tier, event.guild_id)
 
-    if not role_id:
+@plugin.listener(hikari.GuildMessageUpdateEvent)
+async def on_despawn(event: hikari.GuildMessageUpdateEvent) -> None:
+    if not plugin.spawn_cards.get(event.channel_id):
         return
-    role = plugin.bot.cache.get_role(role_id)
-    if not role:
+    if event.old_message.author.id != 673362753489993749:
         return
-    await asyncio.sleep(random.randint(50, 200) / 100)
-    embed = hikari.Embed(
-        color=plugin.bot.colors.purple,
-        description=f"`Tier {tier}` just spawned.",
+    spawn = plugin.spawn_cards.get(event.channel_id)
+    if not event.old_message.embeds[0] == spawn:
+        return
+    await plugin.bot.cards_db.insert_spawn_data(
+        event.guild_id,
+        event.message.created_at.timestamp().__int__(),
+        spawn.title,
+        check_tier(spawn),
     )
-    await event.get_channel().send(
-        role.mention,
-        embed=embed,
-        role_mentions=True,
+    plugin.spawn_cards.pop(event.channel_id)
+
+
+@plugin.listener(hikari.GuildMessageDeleteEvent)
+async def on_despawn_2(event: hikari.GuildMessageDeleteEvent) -> None:
+    if not plugin.spawn_cards.get(event.channel_id):
+        return
+    if event.old_message.author.id != 673362753489993749:
+        return
+    spawn = plugin.spawn_cards.get(event.channel_id)
+    if not event.old_message.embeds[0] == spawn:
+        return
+    await plugin.bot.cards_db.insert_spawn_data(
+        event.guild_id,
+        event.message.created_at.timestamp().__int__(),
+        spawn.title,
+        check_tier(spawn),
     )
+    plugin.spawn_cards.pop(event.channel_id)
 
 
 def load(bot: Bot) -> None:
