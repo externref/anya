@@ -8,10 +8,10 @@ import aiomysql
 import dotenv
 import hikari
 import lightbulb
+from database.as_cards import ShoobCardDatabase
 from database.prefixes import PrefixDatabase
 
 from .colors import Colors
-from database.as_cards import ShoobCardDatabase
 
 
 class Bot(lightbulb.BotApp):
@@ -105,4 +105,4 @@ class Bot(lightbulb.BotApp):
         :class:`str`
 
         """
-        return await self.prefix_db.get_prefix_by_id(message.guild_id)
+        return await self.prefix_db.get_prefix_by_id(message.guild_id) or "anya"
