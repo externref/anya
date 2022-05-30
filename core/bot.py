@@ -105,4 +105,4 @@ class Bot(lightbulb.BotApp):
         :class:`str`
 
         """
-        return await self.prefix_db.get_prefix_by_id(message.guild_id)
+        return await self.prefix_db.get_prefix_by_id(message.guild_id) or "anya"
