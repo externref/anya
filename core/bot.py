@@ -8,10 +8,10 @@ import aiomysql
 import dotenv
 import hikari
 import lightbulb
+from database.as_cards import ShoobCardDatabase
 from database.prefixes import PrefixDatabase
 
 from .colors import Colors
-from database.as_cards import ShoobCardDatabase
 
 
 class Bot(lightbulb.BotApp):

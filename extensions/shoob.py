@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import datetime
+
 import hikari
-import lightbulb, datetime
+import lightbulb
 from core.bot import Bot
 
 
