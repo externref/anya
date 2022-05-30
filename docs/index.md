@@ -19,3 +19,7 @@ An awesome Discord bot with features like Shoob commands, Server automation util
 <a href="https://discord.com/api/oauth2/authorize?client_id=979906554188939264&permissions=378025593921&scope=bot%20applications.commands">
 <img src="./assets/invite_me_pls.png" width=220 height=50 align="middle" target="_blank">
 </a>
+
+***
+
+Read our guide on how to setup the bot here [Setup Page](setups.md)
