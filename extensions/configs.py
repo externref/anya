@@ -8,6 +8,7 @@ from core.bot import Bot
 class Plugin(lightbulb.Plugin):
     def __init__(self) -> None:
         super().__init__(name="Config", description="Bot configuration for you server.")
+        self.pos = 1
         self.bot: Bot
 
 
@@ -57,42 +58,6 @@ async def change_prefix(
         embed=hikari.Embed(
             color=plugin.bot.colors.green,
             description=f"Changed server prefix to `{context.options.new_prefix}`",
-        ),
-        reply=True,
-    )
-
-
-@plugin.command
-@lightbulb.option(name="role", description="Role to ping on spawn", type=hikari.Role)
-@lightbulb.option(
-    name="tier",
-    description="Tier to set role for",
-    choices=["Tier1", "Tier2", "Tier3", "Tier4", "Tier5", "Tier6"],
-)
-@lightbulb.command(name="set_role", description="Set role pings for Shoob card spawns")
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def set_role(
-    context: lightbulb.PrefixContext | lightbulb.SlashContext,
-):
-    """Setting role pings for Shoob card spawns"""
-    tier = context.options.tier.lower()
-    role: hikari.Role = context.options.role
-    valid_tiers = ["tier1", "tier2", "tier3", "tier4", "tier5", "tier6"]
-    if tier.lower() not in valid_tiers:
-        return await context.respond(
-            embed=hikari.Embed(
-                color=plugin.bot.colors.dark_red,
-                description=f"Tier must be one from: `{'`, `'.join(valid_tiers)}`",
-            ),
-            reply=True,
-        )
-    await plugin.bot.role_pings.set_role(
-        context.guild_id, int(tier.lower().replace("tier", "")), context.options.role.id
-    )
-    await context.respond(
-        embed=hikari.Embed(
-            color=plugin.bot.colors.green,
-            description=f"Set role pings for `{tier.upper()}` to `{role.name}` ({role.mention}) ",
         ),
         reply=True,
     )
