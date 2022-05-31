@@ -6,8 +6,6 @@ The bot saves data for all the cards spawned in the server.
 
 `anya recent|r`: The `recent` command can be used to view the last cards that spawned in the server with the following information.
 
-![](./assets/recent_command.png)
-
 | DATA | INFO |
 |------|------|
 |Name| Name of the card which spawned|
@@ -19,6 +17,7 @@ The bot saves data for all the cards spawned in the server.
 *: data available only if the card was claimed.
 
 Additional Options:
+
 `claimed|--c`: for only cards which have been claimed.
 
 `despawned|--d`: despawned cards when noone claimed them.
@@ -34,3 +33,13 @@ Additional Options:
 `tier5|t5`: TIER1 card spawns.
 
 `tier6|t6`: TIER1 card spawns.
+
+****
+
+![](./assets/recent_command.png)
+
+![](./assets/recent_claimed.png)
+
+![](./assets/recent_despawned.png)
+
+![](./assets/recent_tier.png)

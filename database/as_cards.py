@@ -133,8 +133,8 @@ class ShoobCardDatabase:
         Returns
         -------
 
-            :class:`CardSpawn`        
-        
+            :class:`CardSpawn`
+
         """
         async with self.database_pool.acquire() as conn:
             conn: aiomysql.Connection
@@ -166,8 +166,8 @@ class ShoobCardDatabase:
         Returns
         -------
 
-            :class:`CardSpawn`        
-        
+            :class:`CardSpawn`
+
         """
         async with self.database_pool.acquire() as conn:
             conn: aiomysql.Connection
@@ -201,8 +201,8 @@ class ShoobCardDatabase:
         Returns
         -------
 
-            :class:`CardSpawn`        
-        
+            :class:`CardSpawn`
+
         """
         async with self.database_pool.acquire() as conn:
             conn: aiomysql.Connection
@@ -237,8 +237,8 @@ class ShoobCardDatabase:
         Returns
         -------
 
-            :class:`CardSpawn`        
-        
+            :class:`CardSpawn`
+
         """
         async with self.database_pool.acquire() as conn:
             conn: aiomysql.Connection

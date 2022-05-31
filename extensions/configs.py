@@ -15,6 +15,7 @@ plugin = Plugin()
 
 
 @plugin.command
+@lightbulb.add_checks(lightbulb.has_guild_permissions(hikari.Permissions.MANAGE_GUILD))
 @lightbulb.option(
     name="new_prefix",
     description="The new server prefix",

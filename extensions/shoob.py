@@ -74,6 +74,7 @@ def get_embed(context: hikari.Member, spawns) -> hikari.Embed:
         "TIER5",
         "TIER6",
     ],
+    required=False,
 )
 @lightbulb.command(
     name="recent", description="Recent card spawns in this server", aliases=["r"]
