@@ -1,4 +1,4 @@
-<img src="./assets/banner.png" width=900 height=200 align="middle">
+<img src="./assets/banner.png" width=900 align="middle">
 
 
 An awesome Discord bot with features like Shoob commands, Server automation utilities and more!
