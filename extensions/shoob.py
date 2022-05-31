@@ -54,7 +54,7 @@ async def recents(context: lightbulb.PrefixContext | lightbulb.SlashContext) -> 
         ),
         inline=True,
     )
-    await context.respond(embed=embed)
+    await context.respond(embed=embed, reply=True)
 
 
 def load(bot: Bot) -> None:
