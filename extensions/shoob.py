@@ -11,6 +11,7 @@ class Plugin(lightbulb.Plugin):
     def __init__(self) -> None:
         super().__init__(name="Shoob", description="Shoob Bot related commands")
         self.bot: Bot
+        self.pos = 0
 
 
 plugin = Plugin()
