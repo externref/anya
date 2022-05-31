@@ -91,8 +91,8 @@ class PrefixDatabase:
             self.prefix_cache[guild_id] = data[1]
             return data[1]  # cache-ing and returning custom prefix
         else:
-            self.prefix_cache[guild_id] = "a!"
-            return "a!"  # cache-ing and returning default prefix
+            self.prefix_cache[guild_id] = "anya"
+            return "anya"  # cache-ing and returning default prefix
 
     async def set_prefix(self, guild_id: int, prefix: str) -> None:
         """
