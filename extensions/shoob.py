@@ -81,7 +81,7 @@ def get_embed(context: hikari.Member, spawns) -> hikari.Embed:
 )
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def recents(context: lightbulb.PrefixContext | lightbulb.SlashContext) -> None:
-    category = context.options.category.lower()
+    category = context.options.category.lower() if context.options.category else ""
 
     if category in ("despawned", "--d"):
         spawns = await plugin.bot.cards_db.recent_guild_despawns(context.guild_id)
