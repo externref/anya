@@ -16,16 +16,16 @@ class Plugin(lightbulb.Plugin):
 plugin = Plugin()
 
 
-@plugin.command
-@lightbulb.command(
-    name="recent", description="Recent card spawns in this server", aliases=["r"]
-)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def recents(context: lightbulb.PrefixContext | lightbulb.SlashContext) -> None:
-    spawns = await plugin.bot.cards_db.recent_guild_claims(context.guild_id)
-    embed = hikari.Embed(color=plugin.bot.colors.peach_yellow).set_author(
-        name=f"Last 5 claims in {context.get_guild().name}",
-        icon=context.get_guild().icon_url,
+def get_embed(context: hikari.Member, spawns) -> hikari.Embed:
+    embed = (
+        hikari.Embed(color=plugin.bot.colors.peach_yellow)
+        .set_author(
+            name=f"Last 5 claims in {context.get_guild().name}",
+            icon=context.get_guild().icon_url,
+        )
+        .set_footer(
+            text=f"Requested by {context.author}", icon=context.author.avatar_url
+        )
     )
     embed.add_field(
         name="CARD",
@@ -34,7 +34,8 @@ async def recents(context: lightbulb.PrefixContext | lightbulb.SlashContext) -> 
                 f"{_id}. `T{spawn.tier}` `{spawn.name}`{f'#`{spawn.v}`' if spawn.v else '' }"
                 for _id, spawn in enumerate(spawns, start=1)
             ]
-        ),
+        )
+        or "`  ~~~  `",
         inline=True,
     )
     embed.add_field(
@@ -44,17 +45,68 @@ async def recents(context: lightbulb.PrefixContext | lightbulb.SlashContext) -> 
                 (f"<@{spawn.claimer_id}>" if spawn.claimer_id else "`   ~   `")
                 for spawn in spawns
             ]
-        ),
+        )
+        or "`  ~~~  `",
         inline=True,
     )
     embed.add_field(
         name="SPAWNED",
         value="\n".join(
             [f"<t:{spawn.spawn_ts.timestamp().__int__()}:R>" for spawn in spawns]
-        ),
+        )
+        or "`  ~~~  `",
         inline=True,
     )
-    await context.respond(embed=embed, reply=True)
+    return embed
+
+
+@plugin.command
+@lightbulb.option(
+    name="category",
+    description="Type of recent spawns to view.",
+    choices=[
+        "claimed",
+        "despawned",
+        "TIER1",
+        "TIER2",
+        "TIER3",
+        "TIER4",
+        "TIER5",
+        "TIER6",
+    ],
+)
+@lightbulb.command(
+    name="recent", description="Recent card spawns in this server", aliases=["r"]
+)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+async def recents(context: lightbulb.PrefixContext | lightbulb.SlashContext) -> None:
+    category = context.options.category.lower()
+
+    if category in ("despawned", "--d"):
+        spawns = await plugin.bot.cards_db.recent_guild_despawns(context.guild_id)
+    elif category in ("claimed", "--c"):
+        spawns = await plugin.bot.cards_db.recent_guild_claims(context.guild_id)
+    elif category in (
+        "tier1",
+        "t1",
+        "tier2",
+        "t2",
+        "tier3",
+        "t3",
+        "tier4",
+        "t4",
+        "tier5",
+        "t5",
+        "tier6",
+        "t6",
+    ):
+        spawns = await plugin.bot.cards_db.recent_tier_spawns(
+            context.guild_id, int(category.strip("tier"))
+        )
+    else:
+        spawns = await plugin.bot.cards_db.recent_guild_spawns(context.guild_id)
+    embed = get_embed(context, spawns)
+    await context.respond(embed=embed)
 
 
 def load(bot: Bot) -> None:

@@ -119,7 +119,23 @@ class ShoobCardDatabase:
                 )
             await conn.commit()
 
-    async def recent_guild_claims(self, guild_id, limit=5) -> list[CardSpawn]:
+    async def recent_guild_spawns(self, guild_id, limit=5) -> list[CardSpawn]:
+        """Getting recent spawns in the server.
+
+        Paramaters
+        ----------
+
+            guild_id: :class:`int`
+                ID of the server.
+            limit: :class:`int`
+                Max number of card data to get.
+
+        Returns
+        -------
+
+            :class:`CardSpawn`        
+        
+        """
         async with self.database_pool.acquire() as conn:
             conn: aiomysql.Connection
             async with conn.cursor() as cursor:
@@ -134,4 +150,107 @@ class ShoobCardDatabase:
                 )
                 data_list: list = await cursor.fetchmany(limit)
 
+        return [CardSpawn(data) for data in data_list if data]
+
+    async def recent_guild_claims(self, guild_id: int, limit=5) -> list[CardSpawn]:
+        """Getting recent claims in the server.
+
+        Paramaters
+        ----------
+
+            guild_id: :class:`int`
+                ID of the server.
+            limit: :class:`int`
+                Max number of card data to get.
+
+        Returns
+        -------
+
+            :class:`CardSpawn`        
+        
+        """
+        async with self.database_pool.acquire() as conn:
+            conn: aiomysql.Connection
+            async with conn.cursor() as cursor:
+                cursor: aiomysql.Cursor
+                await cursor.execute(
+                    """
+                    SELECT * FROM cardspawns
+                    WHERE guild_id = %s AND claimer_id IS NOT NULL
+                    ORDER BY spawn_ts DESC
+                    """,
+                    (guild_id,),
+                )
+                data_list: list = await cursor.fetchmany(limit)
+
+        return [CardSpawn(data) for data in data_list if data]
+
+    async def recent_guild_despawns(
+        self, guild_id: int, limit: int = 5
+    ) -> list[CardSpawn]:
+        """Getting recent despawns in the server.
+
+        Paramaters
+        ----------
+
+            guild_id: :class:`int`
+                ID of the server.
+            limit: :class:`int`
+                Max number of card data to get.
+
+        Returns
+        -------
+
+            :class:`CardSpawn`        
+        
+        """
+        async with self.database_pool.acquire() as conn:
+            conn: aiomysql.Connection
+            async with conn.cursor() as cursor:
+                cursor: aiomysql.Cursor
+                await cursor.execute(
+                    """
+                    SELECT * FROM cardspawns
+                    WHERE guild_id = %s AND claimer_id IS NULL
+                    ORDER BY spawn_ts DESC
+                    """,
+                    (guild_id,),
+                )
+                data_list: list = await cursor.fetchmany(limit)
+        return [CardSpawn(data) for data in data_list if data]
+
+    async def recent_tier_spawns(
+        self, guild_id: int, tier: int, limit: int = 5
+    ) -> list[CardSpawn]:
+        """Getting recent spawns of a tier in the server.
+
+        Paramaters
+        ----------
+
+            guild_id: :class:`int`
+                ID of the server.
+            tier: :class:`int`
+                Tier to get spawns for
+            limit: :class:`int`
+                Max number of card data to get.
+
+        Returns
+        -------
+
+            :class:`CardSpawn`        
+        
+        """
+        async with self.database_pool.acquire() as conn:
+            conn: aiomysql.Connection
+            async with conn.cursor() as cursor:
+                cursor: aiomysql.Cursor
+                await cursor.execute(
+                    """
+                    SELECT * FROM cardspawns
+                    WHERE guild_id = %s AND tier = %s
+                    ORDER BY spawn_ts DESC
+                    """,
+                    (guild_id, tier),
+                )
+                data_list: list = await cursor.fetchmany(limit)
         return [CardSpawn(data) for data in data_list if data]

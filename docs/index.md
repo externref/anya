@@ -18,4 +18,8 @@ An awesome Discord bot with features like Shoob commands, Server automation util
 
 ***
 
+**Here for Shoob?**
+
+Check out what the bot can do [here](shoob.md) !
+
 Read our guide on how to setup the bot here [Setup Page](setups.md)
