@@ -1,4 +1,4 @@
-<img src="./assets/banner.png" width=900 height=200 align="middle">
+<img src="./assets/banner.png" width=50% height=50% align="middle">
 
 
 An awesome Discord bot with features like Shoob commands, Server automation utilities and more!
@@ -6,14 +6,9 @@ An awesome Discord bot with features like Shoob commands, Server automation util
 
 ## FEATURES
 
-* Fast: The bot's is optimised on basis of both speed and features.
+* Shoob Bot commands: Additional Shoob bot commands to provide extended functionality to that bot.
 
-* Customisable & Free: You can customise bot settings without any limitations for free.
-
-* Loads of features: Bot provides you with a lot of automation commands and other server utilities along with Shoob card game features.
-
-* Open Source: The bot is completely open source, hence providing a transparency between users and the bot functions.
-
+* Anime commands: Get information about an anime, sources, characters and much more.
 
 
 <a href="https://discord.com/api/oauth2/authorize?client_id=979906554188939264&permissions=378025593921&scope=bot%20applications.commands">
