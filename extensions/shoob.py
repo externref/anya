@@ -34,7 +34,7 @@ def get_embed(context: hikari.Member, spawns) -> hikari.Embed:
         name="CARD",
         value="\n".join(
             [
-                f"{_id}. `T{spawn.tier}`[`{spawn.name}`]({spawn.url}){f' #`{spawn.v}`' if spawn.v else '' }"
+                f"{_id}. `T{spawn.tier}` {f'[`{spawn.name}`]({spawn.url})' if spawn.url else f'`{spawn.name}`'}{f' #`{spawn.v}`' if spawn.v else '' }"
                 for _id, spawn in enumerate(spawns, start=1)
             ]
         )
@@ -110,7 +110,7 @@ async def recents(context: lightbulb.PrefixContext | lightbulb.SlashContext) -> 
     else:
         spawns = await plugin.bot.cards_db.recent_guild_spawns(context.guild_id)
     embed = get_embed(context, spawns)
-    await context.respond(embed=embed)
+    await context.respond(embed=embed, reply=True)
 
 
 def load(bot: Bot) -> None:
