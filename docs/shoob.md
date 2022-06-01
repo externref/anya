@@ -24,15 +24,15 @@ Additional Options:
 
 `tier1|t1`: TIER1 card spawns.
 
-`tier2|t2`: TIER1 card spawns.
+`tier2|t2`: TIER2 card spawns.
 
-`tier3|t3`: TIER1 card spawns.
+`tier3|t3`: TIER3 card spawns.
 
-`tier4|t4`: TIER1 card spawns.
+`tier4|t4`: TIER4 card spawns.
 
-`tier5|t5`: TIER1 card spawns.
+`tier5|t5`: TIER5 card spawns.
 
-`tier6|t6`: TIER1 card spawns.
+`tier6|t6`: TIER6 card spawns.
 
 ****
 

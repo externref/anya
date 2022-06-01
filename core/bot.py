@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import asyncio
 import os
-from re import A
 
 import aiomysql
 import dotenv
@@ -106,3 +105,10 @@ class Bot(lightbulb.BotApp):
 
         """
         return await self.prefix_db.get_prefix_by_id(message.guild_id) or "anya"
+
+    @property
+    def invite_url(self) -> str:
+        return (
+            f"https://discord.com/api/oauth2/authorize?client_id={self.get_me().id}"
+            "&permissions=378025593921&scope=bot%20applications.commands"
+        )

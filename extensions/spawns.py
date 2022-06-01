@@ -11,6 +11,7 @@ class Plugin(lightbulb.Plugin):
         self.ignored = True
         self.bot: Bot
         self.spawn_cards: dict[int, hikari.Embed] = {}
+        self.pos = -1
 
 
 plugin = Plugin()
