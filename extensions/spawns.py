@@ -96,6 +96,7 @@ async def on_spawn(event: hikari.GuildMessageCreateEvent) -> None:
             event.message.created_at.timestamp().__int__(),
             embed.title,
             check_tier(embed),
+            embed.url,
             int(
                 event_2.message.embeds[0]
                 .description.split("#:")[1]
@@ -116,6 +117,7 @@ async def on_spawn(event: hikari.GuildMessageCreateEvent) -> None:
             event.message.created_at.timestamp().__int__(),
             embed.title,
             check_tier(embed),
+            embed.url,
         )
     plugin.spawn_cards.pop(event.channel_id)
 
@@ -134,6 +136,7 @@ async def on_despawn(event: hikari.GuildMessageUpdateEvent) -> None:
         event.message.created_at.timestamp().__int__(),
         spawn.title,
         check_tier(spawn),
+        spawn.url,
     )
     plugin.spawn_cards.pop(event.channel_id)
 
@@ -152,6 +155,7 @@ async def on_despawn_2(event: hikari.GuildMessageDeleteEvent) -> None:
         event.message.created_at.timestamp().__int__(),
         spawn.title,
         check_tier(spawn),
+        spawn.url,
     )
     plugin.spawn_cards.pop(event.channel_id)
 
