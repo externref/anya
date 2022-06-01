@@ -2979,4 +2979,4 @@ class Colors:
         return getattr(
             cls,
             random.choice([attr for attr in cls.__dict__ if not attr.startswith("_")]),
-        )()
+        )
