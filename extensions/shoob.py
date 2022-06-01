@@ -9,7 +9,9 @@ from core.bot import Bot
 
 class Plugin(lightbulb.Plugin):
     def __init__(self) -> None:
-        super().__init__(name="Shoob", description="Shoob Bot related commands")
+        super().__init__(
+            name="Shoob", description="Commands extending shoob bot functionality."
+        )
         self.bot: Bot
         self.pos = 0
 
