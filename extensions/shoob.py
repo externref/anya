@@ -34,7 +34,7 @@ def get_embed(context: hikari.Member, spawns) -> hikari.Embed:
         name="CARD",
         value="\n".join(
             [
-                f"{_id}. `T{spawn.tier}` `{spawn.name}`{f'#`{spawn.v}`' if spawn.v else '' }"
+                f"{_id}. `T{spawn.tier}`[`{spawn.name}`]({spawn.url}){f' #`{spawn.v}`' if spawn.v else '' }"
                 for _id, spawn in enumerate(spawns, start=1)
             ]
         )

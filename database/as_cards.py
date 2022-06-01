@@ -25,12 +25,16 @@ class CardSpawn:
         return self.data[3]
 
     @property
-    def v(self) -> int:
+    def url(self) -> str:
         return self.data[4]
 
     @property
-    def claimer_id(self) -> int:
+    def v(self) -> int:
         return self.data[5]
+
+    @property
+    def claimer_id(self) -> int:
+        return self.data[6]
 
 
 class ShoobCardDatabase:
@@ -66,6 +70,7 @@ class ShoobCardDatabase:
                         spawn_ts BIGINT,
                         card_name VARCHAR(40),
                         tier INT,
+                        card_url VARCHAR(100),
                         card_v BIGINT,
                         claimer_id BIGINT
                     );
@@ -81,6 +86,7 @@ class ShoobCardDatabase:
         guild_id: int,
         spawn_ts: int,
         card_name: str,
+        card_url: str,
         tier: int,
         card_v: int | None = None,
         claimer_id: int | None = None,
@@ -113,9 +119,9 @@ class ShoobCardDatabase:
                 await cursor.execute(
                     """
                     INSERT INTO cardspawns
-                    VALUES ( %s, %s, %s, %s, %s, %s )
+                    VALUES ( %s, %s, %s,%s, %s, %s, %s )
                     """,
-                    (guild_id, spawn_ts, card_name, tier, card_v, claimer_id),
+                    (guild_id, spawn_ts, card_name, card_url, tier, card_v, claimer_id),
                 )
             await conn.commit()
 
