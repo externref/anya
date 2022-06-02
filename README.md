@@ -2,7 +2,7 @@
 
 
 An awesome Discord bot with features like Shoob commands, Server automation utilities and more!
-
+[ Still at development stage ]
 
 ## FEATURES
 
