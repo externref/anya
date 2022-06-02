@@ -260,3 +260,33 @@ class ShoobCardDatabase:
                 )
                 data_list: list = await cursor.fetchmany(limit)
         return [CardSpawn(data) for data in data_list if data]
+
+    async def get_all_spawns(self, guild_id: int) -> list[CardSpawn]:
+        """
+        Getting all the spawns in the server.
+
+        Paramaters
+        ----------
+
+            guild_id: :class:`int`
+                ID of the server.
+
+        Returns
+        -------
+
+            :class:`CardSpawn`
+
+        """
+        async with self.database_pool.acquire() as conn:
+            conn: aiomysql.Connection
+            async with conn.cursor() as cursor:
+                cursor: aiomysql.Cursor
+                await cursor.execute(
+                    """
+                    SELECT * FROM cardspawns
+                    WHERE guild_id = %s
+                    """,
+                    (guild_id,),
+                )
+                data_list: list = await cursor.fetchall()
+        return [CardSpawn(data) for data in data_list if data]
