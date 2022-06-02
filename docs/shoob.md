@@ -59,4 +59,6 @@ It depends on the "Read Messages" permissions in the shoob bot channel.
 |Users|Claimers in the server.|
 |Tiers Data|Spawned, Claimed and Despawned cards count.|
 
+![](./assets/stats.png)
+
 *** 
