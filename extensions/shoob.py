@@ -113,6 +113,58 @@ async def recents(context: lightbulb.PrefixContext | lightbulb.SlashContext) -> 
     await context.respond(embed=embed, reply=True)
 
 
+@plugin.command
+@lightbulb.command(
+    name="stats", description="Get the server's stats based on bot's records."
+)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+async def lb_command(context: lightbulb.PrefixContext | lightbulb.SlashContext) -> None:
+    data = await plugin.bot.cards_db.get_all_spawns(context.guild_id)
+    tier1 = [card for card in data if card.tier == 1]
+    tier2 = [card for card in data if card.tier == 2]
+    tier3 = [card for card in data if card.tier == 3]
+    tier4 = [card for card in data if card.tier == 4]
+    tier5 = [card for card in data if card.tier == 5]
+    tier6 = [card for card in data if card.tier == 6]
+    members = {card.claimer_id for card in data}
+
+    def get_despawned_count(tier: list) -> int:
+        return len([card for card in tier if card.claimer_id is None])
+
+    def string_for_tier(tier: list, n: int) -> str:
+        return f"**Tier {n}**: `{len(tier)}` Spawns, `{len(tier)-get_despawned_count(tier)}` Claims, `{get_despawned_count(tier)}` Despawns"
+
+    embed = (
+        hikari.Embed(color=plugin.bot.colors.purple)
+        .set_author(
+            name=f"Stats for {context.get_guild()}", icon=plugin.bot.get_me().avatar_url
+        )
+        .set_thumbnail(context.get_guild().icon_url)
+        .set_footer(text="This data based on what messages the bot is able to read.")
+    )
+    embed.description = (
+        f"Server: {context.get_guild().name}\n"
+        f"Total claims: {len(data)}\n"
+        f"Card Claimers: {len(members)}"
+    )
+
+    embed.add_field(
+        name="CARD STATS",
+        value="\n".join(
+            [
+                string_for_tier(tier, tier_n)
+                if tier
+                else f"**Tier {tier_n}**: `No spawns yet`"
+                for tier_n, tier in enumerate(
+                    [tier1, tier2, tier3, tier4, tier5, tier6], start=1
+                )
+            ]
+        ),
+    )
+
+    await context.respond(embed=embed, reply=True)
+
+
 def load(bot: Bot) -> None:
     bot.add_plugin(plugin)
 
