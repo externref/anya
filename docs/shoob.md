@@ -43,3 +43,20 @@ Additional Options:
 ![](./assets/recent_despawned.png)
 
 ![](./assets/recent_tier.png)
+
+****
+
+### SERVER STATS
+
+The `anya stats` command can be used to view server's stats.
+
+It depends on the "Read Messages" permissions in the shoob bot channel.
+
+|DATA|INFO|
+|-----|-----|
+|Name|Name of the respective Guild.|
+|Claims|Total number of cards claimed.|
+|Users|Claimers in the server.|
+|Tiers Data|Spawned, Claimed and Despawned cards count.|
+
+*** 
