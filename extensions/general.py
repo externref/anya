@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import datetime
+import os
 
 import hikari
 import lightbulb
+import psutil
 from core.bot import Bot
 
 
@@ -23,6 +25,10 @@ plugin = Plugin()
 )
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def ping_cmd(context: lightbulb.PrefixContext | lightbulb.SlashContext) -> None:
+    """Check the heartbeat latency of the bot.
+
+    **Example Usage:** `anya ping`
+    """
     await context.respond(
         embed=hikari.Embed(
             color=plugin.bot.colors.rose_pink,
@@ -31,12 +37,34 @@ async def ping_cmd(context: lightbulb.PrefixContext | lightbulb.SlashContext) ->
     )
 
 
+"""  TODO: botinfo command
+@plugin.command
+@lightbulb.command(
+    name="info", description="Some info about the bot", aliases=["botinfo"]
+)
+async def botstats(context: lightbulb.PrefixContext | lightbulb.SlashContext) -> None:
+    process = psutil.Process(os.getpid())
+    memory = process.memory_info()
+    data = {
+        "Uptime": plugin.bot.uptime,
+        "Servers": len(plugin.bot.cache.get_guilds_view()),
+        "Users": len(plugin.bot.cache.get_users_view()),
+        "Memory Usage": f"{...},",
+    }
+"""
+
+
 @plugin.command
 @lightbulb.command(name="commands", description="A list of all bot commands.")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def list_commands(
     context: lightbulb.PrefixContext | lightbulb.SlashContext,
 ) -> None:
+    """A list of all the prefix commands in the bot.
+    For slash commands you can use `/` and navigate to bot's menu on discord to view its slash commands.
+
+    **Example Usage:** `anya commands`
+    """
     embed = (
         hikari.Embed(
             color=plugin.bot.colors.peach_yellow,

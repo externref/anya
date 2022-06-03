@@ -27,7 +27,16 @@ plugin = Plugin()
 async def change_prefix(
     context: lightbulb.PrefixContext | lightbulb.SlashContext,
 ) -> None:
-    """Command to set custom prefixes for servers."""
+    """Change the prefix of your server to the one you want.
+
+    **Allowed Arguments:**
+    `new_prefix`: The new prefix for the server.
+
+    **Example Usage:** `anya prefix !`
+    `!` is your new prefix now!
+
+    Note: Discord markdown characters like `, #, @, *, / are not allowed.
+    """
 
     if len(context.options.new_prefix) > 10 or any(
         (

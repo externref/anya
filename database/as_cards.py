@@ -218,7 +218,7 @@ class ShoobCardDatabase:
                     """
                     SELECT * FROM cardspawns
                     WHERE guild_id = %s AND claimer_id IS NULL
-                    ORDER BY spawn_ts DESC
+                    ORDER BY spawn_ts DESCrrrrrrrr
                     """,
                     (guild_id,),
                 )

@@ -1,6 +1,7 @@
 import hikari
 import lightbulb
 from core.bot import Bot
+import inspect
 
 
 class Help(lightbulb.BaseHelpCommand):
@@ -41,8 +42,20 @@ class Help(lightbulb.BaseHelpCommand):
     async def send_command_help(
         self, context: lightbulb.Context, command: lightbulb.Command
     ) -> None:
-        embed = hikari.Embed(color=self.bot.colors.peach_yellow)
-        return await super().send_command_help(context, command)
+        desc = f"```ini\n[{command.description} ]\n```\n"
+        embed = (
+            hikari.Embed(
+                color=self.bot.colors.peach_yellow,
+                description=desc + inspect.getdoc(command.callback),
+            )
+            .set_author(name=f"{command.name.upper()} COMMAND")
+            .set_thumbnail(self.bot.get_me().avatar_url)
+            .set_footer(
+                f"Requested by {context.author}", icon=context.author.avatar_url
+            )
+        )
+        await context.respond(embed=embed, reply=True)
+        return await super().send_command_help(context, command.callback)
 
     async def send_group_help(self, context: lightbulb.Context, group) -> None:
         return await super().send_group_help(context, group)

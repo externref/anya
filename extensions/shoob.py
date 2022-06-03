@@ -84,6 +84,15 @@ def get_embed(context: hikari.Member, spawns) -> hikari.Embed:
 )
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def recents(context: lightbulb.PrefixContext | lightbulb.SlashContext) -> None:
+    """Recent card spawns in the server.
+    The bot needs "Read Messages" permissions in the shoob card spawn channel for this command.
+
+    **Allowed Arguments:**
+    `category`: Select what type of recent cards to show.
+    choices = `t1`, `t2`, `t3`, `t4`, `t5`, `t6`, `claimed`, `despawned`
+
+    **Example Usage:**: `anya recent t1|t2|t3|t4|t5|t6|--c|--d`
+    """
     category = context.options.category.lower() if context.options.category else ""
 
     if category in ("despawned", "--d"):
@@ -119,6 +128,11 @@ async def recents(context: lightbulb.PrefixContext | lightbulb.SlashContext) -> 
 )
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def lb_command(context: lightbulb.PrefixContext | lightbulb.SlashContext) -> None:
+    """Shoob bot claims stats in this server.
+    Gives info about Total claims, total users and Amount of spawned, claimed and despawned cards.
+
+    **Example Usage:** `anya stats`
+    """
     data = await plugin.bot.cards_db.get_all_spawns(context.guild_id)
     tier1 = [card for card in data if card.tier == 1]
     tier2 = [card for card in data if card.tier == 2]
@@ -126,7 +140,7 @@ async def lb_command(context: lightbulb.PrefixContext | lightbulb.SlashContext) 
     tier4 = [card for card in data if card.tier == 4]
     tier5 = [card for card in data if card.tier == 5]
     tier6 = [card for card in data if card.tier == 6]
-    members = {card.claimer_id for card in data}
+    members = {card.claimer_id for card in data if card.claimer_id is not None}
 
     def get_despawned_count(tier: list) -> int:
         return len([card for card in tier if card.claimer_id is None])
@@ -143,9 +157,11 @@ async def lb_command(context: lightbulb.PrefixContext | lightbulb.SlashContext) 
         .set_footer(text="This data based on what messages the bot is able to read.")
     )
     embed.description = (
-        f"Server: {context.get_guild().name}\n"
-        f"Total claims: {len(data)}\n"
-        f"Card Claimers: {len(members)}"
+        f"```yaml\nServer: {context.get_guild().name}\n"
+        f"Total Spawns: {len(data)}\n"
+        f"Total claims: {len(data)-sum([get_despawned_count(t) for t in (tier1, tier2, tier3, tier4, tier5, tier6)])}\n"
+        f"Total Despawns: {sum([get_despawned_count(t) for t in (tier1, tier2, tier3, tier4, tier5, tier6)])}\n"
+        f"Card Claimers: {len(members)}\n```"
     )
 
     embed.add_field(
