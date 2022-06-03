@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+import datetime
 
 import aiomysql
 import dotenv
@@ -45,6 +46,7 @@ class Bot(lightbulb.BotApp):
                 hikari.Intents.ALL_UNPRIVILEGED
                 | hikari.Intents.ALL_MESSAGES  # adding message intents
             ),
+            help_slash_command=True,
         )
         self.colors = Colors()  # initalising custom colors class
         self.prefix_db = (
@@ -54,10 +56,10 @@ class Bot(lightbulb.BotApp):
         self.load_extensions_from("extensions")  # loading all bot extensions
         self.load_extensions("lightbulb.ext.filament.exts.superuser")
         self.event_manager.subscribe(
-            hikari.StartedEvent, self.get_databases_ready
+            hikari.StartingEvent, self.get_databases_ready
         )  # triggering an coroutine on hikari.StartedEvent
 
-    async def get_databases_ready(self, event: hikari.StartedEvent) -> None:
+    async def get_databases_ready(self, event: hikari.StartingEvent) -> None:
         """
         This function is called when the bot is Started
         All the database related setups are performed here.
@@ -69,6 +71,7 @@ class Bot(lightbulb.BotApp):
             The event reponsible for triggering this coro.
 
         """
+        self.start_time: datetime.datetime = datetime.datetime.now()
         self.database_pool: aiomysql.Pool = await aiomysql.create_pool(
             host=os.getenv("MYSQLHOST"),
             user=os.getenv("MYSQLUSER"),
@@ -108,7 +111,13 @@ class Bot(lightbulb.BotApp):
 
     @property
     def invite_url(self) -> str:
+        """Invite url for the bot."""
         return (
             f"https://discord.com/api/oauth2/authorize?client_id={self.get_me().id}"
             "&permissions=378025593921&scope=bot%20applications.commands"
         )
+
+    @property
+    def uptime(self) -> datetime.timedelta:
+        """Returns a `datetime.timedelta` with the bot's uptime"""
+        return datetime.datetime.now() - self.start_time
