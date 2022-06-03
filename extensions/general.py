@@ -26,7 +26,7 @@ plugin = Plugin()
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def ping_cmd(context: lightbulb.PrefixContext | lightbulb.SlashContext) -> None:
     """Check the heartbeat latency of the bot.
-    
+
     **Example Usage:** `anya ping`
     """
     await context.respond(
@@ -35,6 +35,7 @@ async def ping_cmd(context: lightbulb.PrefixContext | lightbulb.SlashContext) ->
             description=f"{plugin.bot.cache.get_emoji(981301275482284042)} Pong! `{round(context.bot.heartbeat_latency*1000, 2)}ms`",
         )
     )
+
 
 """  TODO: botinfo command
 @plugin.command
@@ -51,6 +52,7 @@ async def botstats(context: lightbulb.PrefixContext | lightbulb.SlashContext) ->
         "Memory Usage": f"{...},",
     }
 """
+
 
 @plugin.command
 @lightbulb.command(name="commands", description="A list of all bot commands.")
