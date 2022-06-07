@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import datetime
 import os
-
+import sys
 import hikari
 import lightbulb
 import psutil
@@ -37,21 +36,42 @@ async def ping_cmd(context: lightbulb.PrefixContext | lightbulb.SlashContext) ->
     )
 
 
-"""  TODO: botinfo command
 @plugin.command
 @lightbulb.command(
-    name="info", description="Some info about the bot", aliases=["botinfo"]
+    name="info", description="Some info about the bot", aliases=["botinfo", "about"]
 )
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def botstats(context: lightbulb.PrefixContext | lightbulb.SlashContext) -> None:
-    process = psutil.Process(os.getpid())
-    memory = process.memory_info()
-    data = {
-        "Uptime": plugin.bot.uptime,
-        "Servers": len(plugin.bot.cache.get_guilds_view()),
-        "Users": len(plugin.bot.cache.get_users_view()),
-        "Memory Usage": f"{...},",
-    }
-"""
+    v = sys.version_info
+    info = f"""
+
+    {plugin.bot.get_me().username} is a multipurpose anime based discord bot with awesome features like Shoob commands and server automations.
+    Use `anya commands` to get a list of all commands.
+    Read more here: https://sarthhh.github.io/anya
+
+    **__STATS AND INFO__**
+
+    **Bot Uptime**: {plugin.bot.uptime}
+    **Server Count**: {len(plugin.bot.cache.get_guilds_view())}
+    **CPU Usage**: {psutil.cpu_percent()}%
+    **Memory Usage**: {int(psutil.virtual_memory().percent)}% , {int(psutil.virtual_memory().used*0.00000095367432)}mb /{int(psutil.virtual_memory().total*0.00000095367432)}mb
+    **Python Version**: {f'{v.major}.{v.minor}.{v.micro}.{v.releaselevel}'}
+    **Hikari Version**: {hikari.__version__}
+    **Lightbulb Version**: {lightbulb.__version__}
+    """
+    embed = (
+        hikari.Embed(
+            color=plugin.bot.colors.peach_yellow, description=info.strip("    ")
+        )
+        .set_thumbnail(plugin.bot.get_me().avatar_url)
+        .set_image(
+            "https://raw.githubusercontent.com/sarthhh/anya/main/docs/assets/banner.png"
+        )
+        .set_footer(
+            text=f"Requested by {context.author}", icon=context.author.avatar_url
+        )
+    )
+    await context.respond(embed=embed, reply=True)
 
 
 @plugin.command
@@ -75,6 +95,9 @@ async def list_commands(
         )
         .set_author(name="COMMAND LIST", icon=plugin.bot.get_me().avatar_url)
         .set_thumbnail("https://cdn.discordapp.com/emojis/981311615821565973.webp")
+        .set_image(
+            "https://raw.githubusercontent.com/sarthhh/anya/main/docs/assets/commands.png"
+        )
         .set_footer(
             text=f"Requested by {context.author}", icon=context.author.avatar_url
         )
