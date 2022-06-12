@@ -42,6 +42,14 @@ async def ping_cmd(context: lightbulb.PrefixContext | lightbulb.SlashContext) ->
 )
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def botstats(context: lightbulb.PrefixContext | lightbulb.SlashContext) -> None:
+    """
+    Some basic info about the bot including its stats and other data.
+
+    **Example Usage**: `anya info`
+
+    Note: The information returned can, or cannot be accurate depending upon the bot's cache.
+    """
+
     v = sys.version_info
     info = f"""
 

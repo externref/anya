@@ -10,6 +10,7 @@ import hikari
 import lightbulb
 from database.as_cards import ShoobCardDatabase
 from database.prefixes import PrefixDatabase
+from database.greetings import GreetingsHandler
 
 from .colors import Colors
 
@@ -45,6 +46,7 @@ class Bot(lightbulb.BotApp):
             intents=hikari.Intents(
                 hikari.Intents.ALL_UNPRIVILEGED
                 | hikari.Intents.ALL_MESSAGES  # adding message intents
+                | hikari.Intents.GUILD_MEMBERS
             ),
             help_slash_command=True,
         )
@@ -52,8 +54,11 @@ class Bot(lightbulb.BotApp):
         self.prefix_db = (
             PrefixDatabase()
         )  # initialising PrefixDatabase, setup will be called later
+
+        self.greeting_db = GreetingsHandler()
         self.cards_db = ShoobCardDatabase()  # initialising class for shoob bot cards
-        self.load_extensions_from("extensions")  # loading all bot extensions
+        self.load_extensions_from("commands")  # loading all bot extensions
+        self.load_extensions_from("listeners")
         self.load_extensions("lightbulb.ext.filament.exts.superuser")
         self.event_manager.subscribe(
             hikari.StartingEvent, self.get_databases_ready
@@ -87,6 +92,9 @@ class Bot(lightbulb.BotApp):
         await self.cards_db.setup(
             self
         )  # addding table to the database if it already doesnt exist.
+        await self.greeting_db.setup(
+            self
+        )  # setting up the welcome& leave db for usage.
 
     async def get_prefix(self, bot: "Bot", message: hikari.Message) -> str:
         """
