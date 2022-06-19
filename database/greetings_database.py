@@ -1,29 +1,29 @@
 from __future__ import annotations
 
-
-import aiomysql
-import hikari
-
+import aiomysql  # type: ignore
+import lightbulb
 from core.objects import Greeting
 
+from .base_model import DatabaseModel
 
-class GreetingsHandler:
+
+class GreetingsHandler(DatabaseModel):
     """
     Class dealing with greetings in bot's servers.
     Includes Leave and join module functions.
     """
 
     database_pool: aiomysql.Pool
-    bot: hikari.GatewayBot
+    bot: lightbulb.BotApp
 
-    async def setup(self, bot: hikari.GatewayBot) -> aiomysql.Pool:
+    async def setup(self, bot: lightbulb.BotApp) -> aiomysql.Pool:
         """
         Setting up this database class for usage.
 
         Paramaters
         ----------
 
-            bot: :class:`hikari.GatewayBot`
+            bot: :class:`lightbulb.BotApp`
                 The bot class this class is for.
 
         Returns
@@ -32,64 +32,45 @@ class GreetingsHandler:
             :class:`aiomysql.Pool`
 
         """
-        db_pool: aiomysql.Pool = bot.database_pool
-        async with db_pool.acquire() as conn:
-            conn: aiomysql.Connection
-            async with conn.cursor() as cursor:
-                cursor: aiomysql.Cursor
-                await cursor.execute(
-                    """
-                    CREATE TABLE IF NOT EXISTS greetings
-                    (   
-                        guild_id BIGINT,
 
-                        welcome_cid BIGINT,
-                        welcome_message TEXT,
-                        welcome_color INT,
-                        welcome_image_bytes BLOB,
-                        welcome_embed INT,
+        self.database_pool: aiomysql.Pool = bot.database_pool  # type: ignore
+        await self.exec_write_query(
+            """
+            CREATE TABLE IF NOT EXISTS greetings
+            (   
+                guild_id BIGINT,
 
-                        goodbye_cid BIGINT,
-                        goodbye_message TEXT,
-                        goodbye_color INT,
-                        goodbye_image_bytes BLOB,
-                        goodbye_embed INT
-                        
-                    )
-                    """
-                )
-            await conn.commit()
-        self.database_pool = db_pool
-        self.bot = bot
+                welcome_cid BIGINT,
+                welcome_message TEXT,
+                welcome_color INT,
+                welcome_image_bytes BLOB,
+                welcome_embed INT,
 
-    async def exec_write_query(self, query: str, data: tuple) -> None:
-        async with self.database_pool.acquire() as conn:
-            conn: aiomysql.Connection
-            async with conn.cursor() as cursor:
-                cursor: aiomysql.Cursor
-                await cursor.execute(query, data)
-            await conn.commit()
+                goodbye_cid BIGINT,
+                goodbye_message TEXT,
+                goodbye_color INT,
+                goodbye_image_bytes BLOB,
+                goodbye_embed INT
+                
+            )
+            """
+        )
 
     async def get_greeting_data_for(
         self, greeting: str, guild_id: int
-    ) -> None | Greeting:
-        async with self.database_pool.acquire() as connection:
-            connection: aiomysql.Connection
-            async with connection.cursor() as cursor:
-                cursor: aiomysql.Cursor
-                await cursor.execute(
-                    f"""
-                    SELECT guild_id, {greeting}_cid, {greeting}_message, {greeting}_color, {greeting}_image_bytes, {greeting}_embed 
-                    FROM greetings
-                    WHERE guild_id = %s
-                    """,
-                    (guild_id,),
-                )
+    ) -> Greeting | None:
+        data = await self.exec_fetchone(
+            f"""
+            SELECT guild_id, {greeting}_cid, {greeting}_message, {greeting}_color, {greeting}_image_bytes, {greeting}_embed 
+            FROM greetings
+            WHERE guild_id = %s
+            """,
+            (guild_id,),
+        )
 
-        data = await cursor.fetchone()
         if not data:
             return None
-        return Greeting(self.bot, data)
+        return Greeting(self.bot, data)  # type: ignore
 
     async def set_welcome_data_for_guild(self, guild_id: int, channel_id: int) -> None:
         await self.exec_write_query(
@@ -155,4 +136,16 @@ class GreetingsHandler:
             WHERE guild_id = %s
             """,
             (image_data, guild_id),
+        )
+
+    async def set_embed_option(
+        self, greeting: str, guild_id: int, option: bool
+    ) -> None:
+        await self.exec_write_query(
+            f"""
+            UPDATE greetings SET
+            {greeting}_embed = %s
+            WHERE guild_id = %s
+            """,
+            (0 if option == False else 1, guild_id),
         )

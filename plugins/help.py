@@ -1,6 +1,7 @@
 import hikari
 import lightbulb
 from core.bot import Bot
+import typing as t
 import inspect
 
 
@@ -15,12 +16,12 @@ class Help(lightbulb.BaseHelpCommand):
 
         embed = (
             hikari.Embed(color=self.bot.colors.peach_yellow).set_author(
-                name=self.bot.get_me().username, icon=self.bot.get_me().avatar_url
+                name=self.bot.get_me().username, icon=self.bot.get_me().avatar_url  # type: ignore
             )
             # .set_thumbnail(self.bot.get_me().avatar_url)
         )
         embed.description = (
-            f"Hey there {context.author.username}, thanks for using **{self.bot.get_me().username}**!\n"
+            f"Hey there {context.author.username}, thanks for using **{self.bot.get_me().username}**!\n"  # type: ignore
             f"To get a list of all commands use `{prefix}commands`\n\n"
             f"For a better explanation about commands and bot functionality please visit https://sarthhh.github.io/anya"
         )
@@ -46,16 +47,16 @@ class Help(lightbulb.BaseHelpCommand):
         embed = (
             hikari.Embed(
                 color=self.bot.colors.peach_yellow,
-                description=desc + inspect.getdoc(command.callback),
+                description=desc + t.cast(str, inspect.getdoc(command.callback)),
             )
             .set_author(name=f"{command.name.upper()} COMMAND")
-            .set_thumbnail(self.bot.get_me().avatar_url)
+            .set_thumbnail(self.bot.get_me().avatar_url)  # type: ignore
             .set_footer(
                 f"Requested by {context.author}", icon=context.author.avatar_url
             )
         )
         await context.respond(embed=embed, reply=True)
-        return await super().send_command_help(context, command.callback)
+        return await super().send_command_help(context, command)
 
     async def send_group_help(self, context: lightbulb.Context, group) -> None:
         return await super().send_group_help(context, group)

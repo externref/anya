@@ -1,5 +1,4 @@
 from __future__ import annotations
-from email import message
 
 import hikari
 import lightbulb
@@ -38,15 +37,15 @@ def parse_member_message(base_message: str, member: hikari.Member) -> str:
         "$username": member.username,
         "$id": member.id,
         "$discrim": member.discriminator,
-        "$server": member.get_guild().name,
+        "$server": member.get_guild().name,  # type: ignore
         "$joined_on": member.joined_at,
         "$joined_discord": member.created_at,
         "$bot": member.is_bot,
     }
+    message = base_message
     for key, value in format_.items():
-        base_message.replace(key, str(value))
-
-    return base_message
+        message = message.replace(key, str(value))
+    return message
 
 
 @plugin.listener(hikari.MemberCreateEvent)
@@ -70,7 +69,7 @@ async def member_added_to_server(event: hikari.MemberCreateEvent) -> None:
         embed_color = data.color
         to_embed = data.is_embed
 
-    if not data.channel:
+    if not (channel := data.channel):
         return
 
     if to_embed:

@@ -1,3 +1,4 @@
+import typing as t
 import datetime
 
 import hikari
@@ -17,13 +18,19 @@ class Greeting:
 
     """
 
-    def __init__(self, bot: hikari.GatewayBot, data: tuple[str | int | bytes]) -> None:
+    def __init__(
+        self,
+        bot: hikari.GatewayBot,
+        data: tuple[int, int, str, int, bytes | None, int],
+    ) -> None:
         self.data = data
         self.bot = bot
 
     @property
-    def channel(self) -> hikari.GuildTextChannel:
-        return self.bot.cache.get_guild(self.data[0]).get_channel(self.data[1])
+    def channel(self) -> hikari.GuildChannel | None:
+        if (guild := self.bot.cache.get_guild(self.data[0])) is not None:
+            return guild.get_channel(self.data[1])
+        return None
 
     @property
     def message(self) -> str:
@@ -31,11 +38,11 @@ class Greeting:
 
     @property
     def color(self) -> hikari.Color:
-        return hikari.Color(self.data[3])
+        return hikari.Color(self.data[3]) if self.data[3] is not None else 0x00000
 
     @property
     def welcome_bytes(self) -> hikari.Bytes | None:
-        return hikari.Bytes(self.data[4]) if self.data[4] else None
+        return hikari.Bytes(self.data[4], "greeting") if self.data[4] else None
 
     @property
     def is_embed(self) -> bool:

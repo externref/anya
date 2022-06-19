@@ -37,7 +37,7 @@ def is_spawn_card(embed: hikari.Embed) -> bool:
         "To claim, react to this message",
         "To claim, use `claim [captcha code]`",
     ]
-    if any(quote in embed.description for quote in claim_texts):
+    if any(quote in (embed.description or "") for quote in claim_texts):
         return True
     return False
 
@@ -58,18 +58,19 @@ def check_tier(embed: hikari.Embed) -> int:
         :class:`int`
 
     """
-    if embed.color.__int__() == 16777215:
+    if embed.color == 16777215:
         return 1
-    elif embed.color.__int__() == 8060813:
+    elif embed.color == 8060813:
         return 2
-    elif embed.color.__int__() == 5808355:
+    elif embed.color == 5808355:
         return 3
-    elif embed.color.__int__() == 11360483:
+    elif embed.color == 11360483:
         return 4
-    elif embed.color.__int__() == 16314629:
+    elif embed.color == 16314629:
         return 5
-    elif embed.color.__int__() == 15344162:
+    elif embed.color == 15344162:
         return 6
+    return 0
 
 
 @plugin.listener(hikari.GuildMessageCreateEvent)
@@ -88,24 +89,24 @@ async def on_spawn(event: hikari.GuildMessageCreateEvent) -> None:
             predicate=lambda e: e.channel_id == event.channel_id
             and e.author_id == event.author_id
             and len(e.message.embeds) > 0
-            and e.message.embeds[0].description.__contains__("got the"),
+            and e.message.embeds[0].description.__contains__("got the"),  # type: ignore
             timeout=60,
         )
         await plugin.bot.cards_db.insert_spawn_data(
             event.guild_id,
             event.message.created_at.timestamp().__int__(),
-            embed.title,
+            embed.title or "No Name",
             check_tier(embed),
-            embed.url,
+            embed.url or "No URL",
             int(
                 event_2.message.embeds[0]
-                .description.split("#:")[1]
+                .description.split("#:")[1]  # type: ignore
                 .replace(".", "")
                 .replace("`", "")
             ),
             int(
                 event_2.message.embeds[0]
-                .description.split(">")[0]
+                .description.split(">")[0]  # type: ignore
                 .replace("!", "")
                 .replace("@", "")
                 .replace("<", "")
@@ -115,7 +116,7 @@ async def on_spawn(event: hikari.GuildMessageCreateEvent) -> None:
         await plugin.bot.cards_db.insert_spawn_data(
             event.guild_id,
             event.message.created_at.timestamp().__int__(),
-            embed.title,
+            embed.title or "No Title",
             check_tier(embed),
             embed.url,
         )
@@ -124,17 +125,19 @@ async def on_spawn(event: hikari.GuildMessageCreateEvent) -> None:
 
 @plugin.listener(hikari.GuildMessageUpdateEvent)
 async def on_despawn(event: hikari.GuildMessageUpdateEvent) -> None:
+    if not (old_message := event.old_message):
+        return  # type: ignore
     if not plugin.spawn_cards.get(event.channel_id):
         return
-    if event.old_message.author.id != 673362753489993749:
+    if old_message.author.id != 673362753489993749:  # type: ignore
         return
     spawn = plugin.spawn_cards.get(event.channel_id)
-    if not event.old_message.embeds[0] == spawn:
+    if not old_message.embeds[0] == spawn:  # type: ignore
         return
     await plugin.bot.cards_db.insert_spawn_data(
         event.guild_id,
         event.message.created_at.timestamp().__int__(),
-        spawn.title,
+        spawn.title or "No Title",
         check_tier(spawn),
         spawn.url,
     )
@@ -143,17 +146,19 @@ async def on_despawn(event: hikari.GuildMessageUpdateEvent) -> None:
 
 @plugin.listener(hikari.GuildMessageDeleteEvent)
 async def on_despawn_2(event: hikari.GuildMessageDeleteEvent) -> None:
+    if not (old_message := old_message):
+        return  # type: ignore
     if not plugin.spawn_cards.get(event.channel_id):
         return
-    if event.old_message.author.id != 673362753489993749:
+    if old_message.author.id != 673362753489993749:
         return
     spawn = plugin.spawn_cards.get(event.channel_id)
-    if not event.old_message.embeds[0] == spawn:
+    if not old_message.embeds[0] == spawn:
         return
     await plugin.bot.cards_db.insert_spawn_data(
         event.guild_id,
-        event.message.created_at.timestamp().__int__(),
-        spawn.title,
+        old_message.created_at.timestamp().__int__(),
+        spawn.title or "No Title",
         check_tier(spawn),
         spawn.url,
     )

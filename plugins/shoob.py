@@ -19,12 +19,14 @@ class Plugin(lightbulb.Plugin):
 plugin = Plugin()
 
 
-def get_embed(context: hikari.Member, spawns) -> hikari.Embed:
+def get_embed(context: lightbulb.Context, spawns) -> hikari.Embed | None:
+    if (guild := context.get_guild()) is None:
+        return None
     embed = (
         hikari.Embed(color=plugin.bot.colors.peach_yellow)
         .set_author(
-            name=f"Last 5 claims in {context.get_guild().name}",
-            icon=context.get_guild().icon_url,
+            name=f"Last 5 claims in {guild.name}",
+            icon=guild.icon_url,
         )
         .set_footer(
             text=f"Requested by {context.author}", icon=context.author.avatar_url
@@ -93,12 +95,15 @@ async def recents(context: lightbulb.PrefixContext | lightbulb.SlashContext) -> 
 
     **Example Usage:**: `anya recent t1|t2|t3|t4|t5|t6|--c|--d`
     """
+
     category = context.options.category.lower() if context.options.category else ""
+    if not (guild_id := context.guild_id):
+        return
 
     if category in ("despawned", "--d"):
-        spawns = await plugin.bot.cards_db.recent_guild_despawns(context.guild_id)
+        spawns = await plugin.bot.cards_db.recent_guild_despawns(guild_id)
     elif category in ("claimed", "--c"):
-        spawns = await plugin.bot.cards_db.recent_guild_claims(context.guild_id)
+        spawns = await plugin.bot.cards_db.recent_guild_claims(guild_id)
     elif category in (
         "tier1",
         "t1",
@@ -114,10 +119,10 @@ async def recents(context: lightbulb.PrefixContext | lightbulb.SlashContext) -> 
         "t6",
     ):
         spawns = await plugin.bot.cards_db.recent_tier_spawns(
-            context.guild_id, int(category.strip("tier"))
+            guild_id, int(category.strip("tier"))
         )
     else:
-        spawns = await plugin.bot.cards_db.recent_guild_spawns(context.guild_id)
+        spawns = await plugin.bot.cards_db.recent_guild_spawns(guild_id)
     embed = get_embed(context, spawns)
     await context.respond(embed=embed, reply=True)
 
@@ -133,7 +138,9 @@ async def lb_command(context: lightbulb.PrefixContext | lightbulb.SlashContext) 
 
     **Example Usage:** `anya stats`
     """
-    data = await plugin.bot.cards_db.get_all_spawns(context.guild_id)
+    if (guild := context.get_guild()) is None:
+        return
+    data = await plugin.bot.cards_db.get_all_spawns(guild.id)
     tier1 = [card for card in data if card.tier == 1]
     tier2 = [card for card in data if card.tier == 2]
     tier3 = [card for card in data if card.tier == 3]
@@ -150,14 +157,12 @@ async def lb_command(context: lightbulb.PrefixContext | lightbulb.SlashContext) 
 
     embed = (
         hikari.Embed(color=plugin.bot.colors.purple)
-        .set_author(
-            name=f"Stats for {context.get_guild()}", icon=plugin.bot.get_me().avatar_url
-        )
-        .set_thumbnail(context.get_guild().icon_url)
+        .set_author(name=f"Stats for {guild}", icon=plugin.bot.get_me().avatar_url)  # type: ignore
+        .set_thumbnail(guild.icon_url)
         .set_footer(text="This data based on what messages the bot is able to read.")
     )
     embed.description = (
-        f"```yaml\nServer: {context.get_guild().name}\n"
+        f"```yaml\nServer: {guild.name}\n"
         f"Total Spawns: {len(data)}\n"
         f"Total claims: {len(data)-sum([get_despawned_count(t) for t in (tier1, tier2, tier3, tier4, tier5, tier6)])}\n"
         f"Total Despawns: {sum([get_despawned_count(t) for t in (tier1, tier2, tier3, tier4, tier5, tier6)])}\n"
