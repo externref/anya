@@ -3,7 +3,9 @@
 name: CI
 
 - name: Mypy Check
-  uses: jpetrucciani/mypy-check@0.930
+  uses: jpetrucciani/mypy-check@master
+  with:
+    path: '.'
 
 
 # Controls when the workflow will run
