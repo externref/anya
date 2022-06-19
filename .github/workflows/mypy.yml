@@ -11,7 +11,9 @@ jobs:
       with:
         python-version: 3.x
     - run: pip install --upgrade pip
-    - run: pip install mypy black
+    - run: python -m venv env
+    - run: pip install poetry
+    - run: poetry install
     - run: black .
     - run: mypy .
     
