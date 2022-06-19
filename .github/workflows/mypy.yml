@@ -1,5 +1,5 @@
 name: Mypy Checks
-on: [pull_request]
+on: [pull_request, commit]
 
 jobs:
   build:
