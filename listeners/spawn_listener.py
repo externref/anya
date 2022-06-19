@@ -146,7 +146,7 @@ async def on_despawn(event: hikari.GuildMessageUpdateEvent) -> None:
 
 @plugin.listener(hikari.GuildMessageDeleteEvent)
 async def on_despawn_2(event: hikari.GuildMessageDeleteEvent) -> None:
-    if not (old_message := old_message):
+    if not (old_message := event.old_message):
         return  # type: ignore
     if not plugin.spawn_cards.get(event.channel_id):
         return
