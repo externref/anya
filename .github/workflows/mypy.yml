@@ -12,6 +12,7 @@ jobs:
         python-version: 3.x
     - run: pip install --upgrade pip
     - run: python -m venv env
+    - run: source env/bin/activate
     - run: pip install poetry
     - run: poetry install
     - run: black .
