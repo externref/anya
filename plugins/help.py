@@ -1,8 +1,9 @@
+import inspect
+import typing as t
+
 import hikari
 import lightbulb
 from core.bot import Bot
-import typing as t
-import inspect
 
 
 class Help(lightbulb.BaseHelpCommand):

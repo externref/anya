@@ -4,7 +4,6 @@ import hikari
 import lightbulb
 from core.bot import Bot
 from handlers.greetings_handler import GreetingsHandler
-from typing_extensions import Self
 
 
 class Plugin(lightbulb.Plugin):
@@ -137,11 +136,39 @@ async def set_channel(
 )
 @lightbulb.command(name="message", description="Customise greetings message.")
 async def set_message(
-    context: lightbulb.SlashCommand | lightbulb.PrefixContext,
+    context: lightbulb.SlashContext | lightbulb.PrefixContext,
     greeting: str,
-    channel: str,
+    message: str,
 ) -> None:
-    ...
+    if not (g_id := context.guild_id):
+        return
+    if not greeting.lower() in ("welcome", "goodbye"):
+        await context.respond(
+            embed=hikari.Embed(
+                description="Invalid choice, `welcome` and `goodbye` are only usable choice.",
+                color=plugin.bot.colors.red_brown,
+            )
+        )
+
+        return
+    if not (data := plugin.bot.greeting_db.get_greeting_data_for(greeting, g_id)):
+        await context.respond(
+            embed=hikari.Embed(
+                description=f"You need to setup a greeting channel for `{greeting}` category before updating message.",
+                color=plugin.bot.colors.red_brown,
+            ),
+            reply=True,
+        )
+        return
+    message = message.replace("\\n", "\n")
+    await GreetingsHandler.set_message(context, greeting, message)
+    await context.respond(
+        embed=hikari.Embed(
+            description=f"Set welcome message to: ```\n{message}```",
+            color=plugin.bot.colors.green,
+        ),
+        reply=True,
+    )
 
 
 def load(bot: Bot) -> None:

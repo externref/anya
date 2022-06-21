@@ -1,5 +1,5 @@
-import lightbulb
 import hikari
+import lightbulb
 
 
 class GreetingsHandler:

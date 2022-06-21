@@ -1,7 +1,10 @@
 from __future__ import annotations
 
-import aiomysql  # type: ignore
 import typing as t
+
+import aiomysql  # type: ignore
+
+__all__: t.Tuple[str, ...] = ("DatabaseModel",)
 
 
 class DatabaseModel:

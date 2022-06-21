@@ -1,10 +1,15 @@
 from __future__ import annotations
 
+import typing as t
+
 import aiomysql  # type: ignore
-import lightbulb
+import hikari
+
 from core.objects import Greeting
 
 from .base_model import DatabaseModel
+
+__all__: t.Tuple[str, ...] = ("GreetingsHandler",)
 
 
 class GreetingsHandler(DatabaseModel):
@@ -14,16 +19,16 @@ class GreetingsHandler(DatabaseModel):
     """
 
     database_pool: aiomysql.Pool
-    bot: lightbulb.BotApp
+    bot: hikari.GatewayBot
 
-    async def setup(self, bot: lightbulb.BotApp) -> aiomysql.Pool:
+    async def setup(self, bot: hikari.GatewayBot) -> aiomysql.Pool:
         """
         Setting up this database class for usage.
 
         Paramaters
         ----------
 
-            bot: :class:`lightbulb.BotApp`
+            bot: :class:`hikari.GatewayBot`
                 The bot class this class is for.
 
         Returns
@@ -57,7 +62,7 @@ class GreetingsHandler(DatabaseModel):
         )
 
     async def get_greeting_data_for(
-        self, greeting: str, guild_id: int
+        self, greeting: str, guild_id: int | hikari.Snowflake
     ) -> Greeting | None:
         data = await self.exec_fetchone(
             f"""

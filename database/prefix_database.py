@@ -1,10 +1,14 @@
 from __future__ import annotations
 
+import typing as t
+
 import aiomysql  # type: ignore
 import hikari
 import lightbulb
 
 from .base_model import DatabaseModel
+
+__all__: t.Tuple[str, ...] = ("PrefixDatabase",)
 
 
 class PrefixDatabase(DatabaseModel):

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+
 import hikari
 import lightbulb
 import psutil  # type: ignore
@@ -109,8 +110,12 @@ async def list_commands(
             text=f"Requested by {context.author}", icon=context.author.avatar_url
         )
     )
-    plugins = list(context.bot.plugins.values())
-    plugins.sort(key=lambda p: p.__getattribute__("pos"))
+    plugins = [
+        plugin
+        for plugin in context.bot.plugins.values()
+        if getattr(plugin, "pos", None)
+    ]
+    plugins.sort(key=lambda p: p.pos)  # type: ignore
     for plgn in plugins:
         if getattr(plgn, "ignored", None):
             continue

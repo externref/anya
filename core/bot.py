@@ -8,7 +8,6 @@ import aiomysql  # type: ignore
 import dotenv
 import hikari
 import lightbulb
-from database.as_cards_database import ShoobCardDatabase
 from database.greetings_database import GreetingsHandler
 from database.prefix_database import PrefixDatabase
 
@@ -55,7 +54,6 @@ class Bot(lightbulb.BotApp):
         )  # initialising PrefixDatabase, setup will be called later
 
         self.greeting_db = GreetingsHandler()
-        self.cards_db = ShoobCardDatabase()  # initialising class for shoob bot cards
         self.load_extensions_from("plugins")  # loading all bot extensions
         self.load_extensions_from("listeners")
         self.load_extensions("lightbulb.ext.filament.exts.superuser")
@@ -88,9 +86,6 @@ class Bot(lightbulb.BotApp):
         await self.prefix_db.setup(
             self
         )  # this function adds all important attributes to the PrefixDatabase class
-        await self.cards_db.setup(
-            self
-        )  # addding table to the database if it already doesnt exist.
         await self.greeting_db.setup(
             self
         )  # setting up the welcome& leave db for usage.
