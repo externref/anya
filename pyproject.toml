@@ -8,7 +8,7 @@ license = "GNU GENERAL PUBLIC LICENSE"
 [tool.poetry.dependencies]
 python = ">=3.9,<3.11"
 hikari = "^2.0.0-alpha.108"
-hikari-lightbulb = "^2.2.1"
+hikari-lightbulb = "^2.2.0"
 aiomysql = "^0.1.1"
 uvloop = "^0.16.0"
 python-dotenv = "^0.20.0"
