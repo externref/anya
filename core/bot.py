@@ -1,15 +1,15 @@
 from __future__ import annotations
 
 import asyncio
-import os
 import datetime
+import os
 
-import aiomysql
+import aiomysql  # type: ignore
 import dotenv
 import hikari
 import lightbulb
-from database.as_cards import ShoobCardDatabase
-from database.prefixes import PrefixDatabase
+from database.greetings_database import GreetingsHandler
+from database.prefix_database import PrefixDatabase
 
 from .colors import Colors
 
@@ -26,25 +26,25 @@ class Bot(lightbulb.BotApp):
             Color helper class
         database_pool: :class:`aiomysql.Pool`
             MySQL databse pool to work with the databases
-        prefix_db: :class:`PrefixDatabase`
-            Prefix managing class
 
     """
 
     colors: Colors
     database_pool: aiomysql.Pool
     prefix_db: PrefixDatabase
+    greeting_db: GreetingsHandler
 
     def __init__(self) -> None:
         dotenv.load_dotenv()  # loading enviromental variables in the project
         super().__init__(
-            token=os.getenv("TOKEN"),
+            token=os.getenv("TOKEN") or "",
             prefix=lightbulb.when_mentioned_or(
                 self.get_prefix
             ),  # dynamic `get_prefix` function
             intents=hikari.Intents(
                 hikari.Intents.ALL_UNPRIVILEGED
                 | hikari.Intents.ALL_MESSAGES  # adding message intents
+                | hikari.Intents.GUILD_MEMBERS
             ),
             help_slash_command=True,
         )
@@ -52,8 +52,10 @@ class Bot(lightbulb.BotApp):
         self.prefix_db = (
             PrefixDatabase()
         )  # initialising PrefixDatabase, setup will be called later
-        self.cards_db = ShoobCardDatabase()  # initialising class for shoob bot cards
-        self.load_extensions_from("extensions")  # loading all bot extensions
+
+        self.greeting_db = GreetingsHandler()
+        self.load_extensions_from("plugins")  # loading all bot extensions
+        self.load_extensions_from("listeners")
         self.load_extensions("lightbulb.ext.filament.exts.superuser")
         self.event_manager.subscribe(
             hikari.StartingEvent, self.get_databases_ready
@@ -77,18 +79,18 @@ class Bot(lightbulb.BotApp):
             user=os.getenv("MYSQLUSER"),
             db=os.getenv("MYSQLDATABASE"),
             password=os.getenv("MYSQLPASSWORD"),
-            port=int(os.getenv("MYSQLPORT")),
+            port=int(os.getenv("MYSQLPORT") or "0000"),
             loop=asyncio.get_event_loop(),
             autocommit=False,
         )  # getting configs from the .env file and setting up the database
         await self.prefix_db.setup(
             self
         )  # this function adds all important attributes to the PrefixDatabase class
-        await self.cards_db.setup(
+        await self.greeting_db.setup(
             self
-        )  # addding table to the database if it already doesnt exist.
+        )  # setting up the welcome& leave db for usage.
 
-    async def get_prefix(self, bot: "Bot", message: hikari.Message) -> str:
+    async def get_prefix(self, bot: lightbulb.BotApp, message: hikari.Message) -> str:
         """
         Getting custom prefixes for the server or returning the default one
         if None is set.
@@ -112,8 +114,10 @@ class Bot(lightbulb.BotApp):
     @property
     def invite_url(self) -> str:
         """Invite url for the bot."""
+        if not (user := self.get_me()):
+            return ""
         return (
-            f"https://discord.com/api/oauth2/authorize?client_id={self.get_me().id}"
+            f"https://discord.com/api/oauth2/authorize?client_id={user.id}"
             "&permissions=378025593921&scope=bot%20applications.commands"
         )
 

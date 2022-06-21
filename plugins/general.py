@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-import os
 import sys
+
 import hikari
 import lightbulb
-import psutil
+import psutil  # type: ignore
 from core.bot import Bot
 
 
@@ -12,7 +12,7 @@ class Plugin(lightbulb.Plugin):
     def __init__(self) -> None:
         super().__init__(name="General", description="Commands for general purpose.")
         self.bot: Bot
-        self.pos = 3
+        self.pos = 3  # type: ignore
 
 
 plugin = Plugin()
@@ -42,14 +42,22 @@ async def ping_cmd(context: lightbulb.PrefixContext | lightbulb.SlashContext) ->
 )
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def botstats(context: lightbulb.PrefixContext | lightbulb.SlashContext) -> None:
+    """
+    Some basic info about the bot including its stats and other data.
+
+    **Example Usage**: `anya info`
+
+    Note: The information returned can, or cannot be accurate depending upon the bot's cache.
+    """
+
     v = sys.version_info
     info = f"""
 
-    {plugin.bot.get_me().username} is a multipurpose anime based discord bot with awesome features like Shoob commands and server automations.
+    anya is a multipurpose anime based discord bot with awesome features like Shoob commands and server automations. 
     Use `anya commands` to get a list of all commands.
     Read more here: https://sarthhh.github.io/anya
 
-    **__STATS AND INFO__**
+    **__STATS AND INFO__** 
 
     **Bot Uptime**: {plugin.bot.uptime}
     **Server Count**: {len(plugin.bot.cache.get_guilds_view())}
@@ -63,7 +71,7 @@ async def botstats(context: lightbulb.PrefixContext | lightbulb.SlashContext) ->
         hikari.Embed(
             color=plugin.bot.colors.peach_yellow, description=info.strip("    ")
         )
-        .set_thumbnail(plugin.bot.get_me().avatar_url)
+        .set_thumbnail(plugin.bot.get_me().avatar_url)  # type: ignore
         .set_image(
             "https://raw.githubusercontent.com/sarthhh/anya/main/docs/assets/banner.png"
         )
@@ -93,7 +101,7 @@ async def list_commands(
                 "You can use `/` and navigate to bot's menu on discord to view its slash commands."
             ),
         )
-        .set_author(name="COMMAND LIST", icon=plugin.bot.get_me().avatar_url)
+        .set_author(name="COMMAND LIST", icon=plugin.bot.get_me().avatar_url)  # type: ignore
         .set_thumbnail("https://cdn.discordapp.com/emojis/981311615821565973.webp")
         .set_image(
             "https://raw.githubusercontent.com/sarthhh/anya/main/docs/assets/commands.png"
@@ -102,8 +110,12 @@ async def list_commands(
             text=f"Requested by {context.author}", icon=context.author.avatar_url
         )
     )
-    plugins = list(context.bot.plugins.values())
-    plugins.sort(key=lambda p: p.pos)
+    plugins = [
+        plugin
+        for plugin in context.bot.plugins.values()
+        if getattr(plugin, "pos", None)
+    ]
+    plugins.sort(key=lambda p: p.pos)  # type: ignore
     for plgn in plugins:
         if getattr(plgn, "ignored", None):
             continue
