@@ -20,7 +20,7 @@ An awesome Discord bot with Server automation, Utility features and more!
 
 ## SELF HOSTING
 
-* **1. CREATE A `.env` FILE**
+* **1. CREATING ENVIRONMENTAL VARIABLES**
 
     Create a `.env` file in the same directory as the bot's files using the template provided in `.env.example` file.
 
