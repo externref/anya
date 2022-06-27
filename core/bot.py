@@ -52,6 +52,7 @@ class Bot(lightbulb.BotApp):
             ),
             help_slash_command=True,
             delete_unbound_commands=True,
+            banner="assets"
         )
         self.colors = Colors()  # initalising custom colors class
         self.prefix_db = (
