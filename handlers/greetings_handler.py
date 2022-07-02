@@ -19,7 +19,7 @@ class GreetingMethods:
     ) -> None:
         """Helper function for commands used for setting greeting channels.
 
-        Paramaters
+        Parameters
         ----------
 
             context: :class:`lightbulb.Context`
@@ -57,7 +57,7 @@ class GreetingMethods:
         """
         Updating the greeting message in the database.
 
-        Paramaters
+        Parameters
         ----------
 
             context: :class:`lightbulb.Context`
@@ -86,7 +86,7 @@ class GreetingMethods:
         """
         Updating the greeting color in the database.
 
-        Paramaters
+        Parameters
         ----------
 
             context: :class:`lightbulb.Context`
@@ -95,7 +95,6 @@ class GreetingMethods:
                 Type of greeting ( welcome/ goodbye )
             new_color: :class:`int`
                 Hex/Int value of the color to set.
-
 
         """
         await context.bot.greeting_db.update_color_for(  # type: ignore
@@ -114,7 +113,7 @@ class GreetingMethods:
         """
         Setting up welcome/goodbye image for the guild.
 
-        Paramaters
+        Parameters
         ----------
 
             context: :class:`lightbulb.Context`
@@ -137,7 +136,7 @@ class GreetingMethods:
         """
         Toggle between embed and text type log messages.
 
-        Paramaters
+        Parameters
         ----------
 
             context: :class:`lightbulb.Context`

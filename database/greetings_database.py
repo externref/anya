@@ -25,7 +25,7 @@ class GreetingsHandler(DatabaseModel):
         """
         Setting up this database class for usage.
 
-        Paramaters
+        Parameters
         ----------
 
             bot: :class:`hikari.GatewayBot`
