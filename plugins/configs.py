@@ -5,7 +5,6 @@ import lightbulb
 
 from core.bot import Bot
 from core.exceptions import DoNothing, InvalidChoice, NoChannelSetup
-from database.greetings_database import GreetingsHandler
 from handlers.greetings_handler import GreetingMethods
 from handlers.image_handlers import GreetingImage
 
@@ -130,6 +129,15 @@ async def set_channel(
     greeting: str,
     channel: hikari.GuildTextChannel,
 ) -> None:
+    """
+    Setting up a channel for the particular greeting.
+
+    **Allowed Arguments:**
+    `greeting`: A choice between `welcome` and `goodbye`.
+    `channel`: The channel to send the greetings in
+
+    **Example Usage:** `anya greetings channel welcome #new_users
+    """
     if not greeting.lower() in ("welcome", "goodbye"):
         await context.respond(
             embed=hikari.Embed(
@@ -182,8 +190,17 @@ async def set_message(
     greeting: str,
     message: str,
 ) -> None:
+    """
+    Edit the message for the content or embed description for a particular greeting.
+
+    **Allowed Arguments:**
+    `greeting`: The greeting to edit message for (`welcome`/`goodbye`)
+    `message`: The new message.
+
+    **Example Usage:** `anya greetings message welcome Hey $user, welcome to $server. Have a great stay.`
+    """
     await check_setup(context, greeting)
-    message = message.replace("\\n", r"\n")
+    message = message.replace("\\n", "\n")
     await GreetingMethods.set_message(context, greeting, message)
 
 
@@ -195,6 +212,9 @@ async def set_message(
 async def use_the_slash(
     context: lightbulb.PrefixContext,
 ) -> None:
+    """
+    Slash command only.
+    """
     await context.respond(
         embed=hikari.Embed(
             description="Please use the slash version of this command for better functionality.",
@@ -251,13 +271,24 @@ async def set_image(
     description="Greeting type to update.",
     choices=("welcome", "goodbye"),
 )
-@lightbulb.command(name="type", description="The message type for welcome.", pass_options=True)
+@lightbulb.command(
+    name="type", description="The message type for welcome.", pass_options=True
+)
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
 async def welcome_type(
     context: lightbulb.PrefixContext | lightbulb.SlashContext,
     greeting: str,
     selection: str,
 ) -> None:
+    """
+    Weather to send text or embed messages for greetings
+
+    **Allowed Arguments:**
+    `greeting`: The greeting to edit message for (`welcome`/`goodbye`)
+    `type`: text or embed.
+
+    **Example Usage:** `anya greetings type welcome text`
+    """
     if not selection in (allowed := ("embed", "text")):
         raise InvalidChoice(
             context,
@@ -270,7 +301,6 @@ async def welcome_type(
     await GreetingMethods.toggle_embed(context, greeting, sel)
 
 
-
 @greetings.child
 @lightbulb.option(name="color", description="The next for new color", autocomplete=True)
 @lightbulb.option(
@@ -279,12 +309,24 @@ async def welcome_type(
     choices=("welcome", "goodbye"),
 )
 @lightbulb.command(
-    name="color", description="The embed color for greeting message", aliases=["colour"], pass_options=True
+    name="color",
+    description="The embed color for greeting message",
+    aliases=["colour"],
+    pass_options=True,
 )
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
 async def embed_color(
     context: lightbulb.PrefixContext | lightbulb.SlashContext, greeting: str, color: str
 ) -> None:
+    """
+    Setup color for greeting embeds.
+
+    **Allowed Arguments:**
+    `greeting`: The greeting to edit message for (`welcome`/`goodbye`)
+    `color`: A color hex (or color name in slash commands.)
+
+    **Example Usage:** `anya greetings color welcome FFFFFF`
+    """
     await check_setup(context, greeting)
     try:
         c = int(color, 16)
@@ -308,7 +350,8 @@ async def callback(
     if not (a := option.value):
 
         return [
-            hikari.CommandChoice(name=x, value=str(y)) for x, y in plugin.base_colors.items()
+            hikari.CommandChoice(name=x, value=str(y))
+            for x, y in plugin.base_colors.items()
         ]
     if isinstance(a, int):
         return []
@@ -321,6 +364,7 @@ async def callback(
         ]
     ][:25]
 
+
 def load(bot: Bot) -> None:
     bot.add_plugin(plugin)
     do_setups()
@@ -328,4 +372,3 @@ def load(bot: Bot) -> None:
 
 def unload(bot: Bot) -> None:
     bot.remove_plugin(plugin)
-
