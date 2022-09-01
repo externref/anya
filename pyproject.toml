@@ -19,7 +19,7 @@ Pillow = "^9.2.0"
 aiofiles = "^0.8.0"
 
 [tool.poetry.dev-dependencies]
-black = "^22.6.0"
+black = "^22.8.0"
 mypy = "^0.971"
 
 [build-system]
