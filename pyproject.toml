@@ -16,7 +16,7 @@ lightbulb-ext-filament = {git = "https://github.com/tandemdude/lightbulb-ext-fil
 psutil = "^5.9.1"
 isort = "^5.10.1"
 Pillow = "^9.2.0"
-aiofiles = "^0.8.0"
+aiofiles = "^22.1.0"
 
 [tool.poetry.dev-dependencies]
 black = "^22.8.0"
