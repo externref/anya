@@ -1,7 +1,0 @@
-hikari
-hikari-lightbulb
-uvloop
-aiomysql
-python-dotenv
-pillow
-git+https://github.com/tandemdude/lightbulb-ext-filament

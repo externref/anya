@@ -1,13 +1,6 @@
-import os
+# type: ignore (Pyright doesn't like if i name the file __main__.py)
 
-from core.bot import Bot
+from core.bot import Anya
+from core.utils import parser_and_run
 
-if __name__ == "__main__":
-    bot = Bot()
-    bot.__version__ = "0.0.1"  # type: ignore
-    if os.name != "nt":
-        import uvloop
-
-        uvloop.install()
-
-    bot.run()
+parser_and_run(Anya).run()

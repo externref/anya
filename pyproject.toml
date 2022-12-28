@@ -1,27 +1,45 @@
 [tool.poetry]
-name = "anyaa"
-version = "0.0.1"
-description = "A discord bot that pings roles on shoob card spawns."
+name = "anya"
+version = "0.1.0"
+description = "A cool stoody bot for your discord servers."
 authors = ["sarthhh <shiva02939@gmail.com>"]
-license = "GNU GENERAL PUBLIC LICENSE"
+license = "MIT"
+readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.11"
-hikari = "^2.0.0.dev112"
-hikari-lightbulb = "^2.2.4"
-aiomysql = "^0.1.1"
-uvloop = "^0.16.0"
-python-dotenv = "^0.20.0"
-lightbulb-ext-filament = {git = "https://github.com/tandemdude/lightbulb-ext-filament"}
-psutil = "^5.9.1"
-isort = "^5.10.1"
-Pillow = "^9.2.0"
-aiofiles = "^0.8.0"
+python = ">=3.10,<3.12"
+hikari = "^2.0.0.dev113"
+asyncpg = "^0.27.0"
+python-dotenv = "^0.21.0"
+attrs = "^22.2.0"
 
-[tool.poetry.dev-dependencies]
-black = "^22.8.0"
-mypy = "^0.971"
+[tool.poetry.group.dev.dependencies]
+black = "^22.12.0"
+ruff = "^0.0.198"
+isort = "^5.11.4"
+
+[tool.ruff]
+line-length = 120
+
+[tool.pyright]
+pythonVersion = "3.10"
+typeCheckingMode = "strict"
+reportPrivateUsage = false
+reportImportCycles = false
+
+[tool.black]
+line-length = 120
+target-version = ['py310']
+
+[tool.isort]
+line_length = 120
+skip = "env"
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
