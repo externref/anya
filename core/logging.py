@@ -23,6 +23,7 @@ class LoggingFormatter(logging.Formatter):
 def create_logging_setup(dev: bool) -> logging.Logger:
     stream = logging.StreamHandler()
     stream.setFormatter(LoggingFormatter())
-    logger = logging.Logger("AnyaLogs", logging.DEBUG if dev is True else logging.INFO)
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG if dev is True else logging.INFO)
     logger.addHandler(stream)
     return logger

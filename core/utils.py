@@ -7,6 +7,7 @@ import os
 import typing
 
 import attrs
+import lightbulb
 
 from core.logging import create_logging_setup
 
@@ -17,12 +18,22 @@ parser = argparse.ArgumentParser(prog="Anya!", usage="python -m . *args", descri
 parser.add_argument("-d", "--dev", action="store_true", help="Provide for dev mode ( will use dev token ).")
 
 
+class Plugin(lightbulb.Plugin):
+    def __init__(self, name: str, description: str, pos: int):
+        self.pos = pos
+        super().__init__(name, description)
+
+    @property
+    def bot(self) -> Anya:
+        return typing.cast("Anya", super().bot)
+
+
 @attrs.define(kw_only=True)
 class Hook:
     name: str
     callback: typing.Callable[..., typing.Any]
 
-    def run(self, *args: typing.Any, **kwargs: typing.Any) -> None:
+    def __call__(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         call = self.callback(*args, **kwargs)
         if inspect.iscoroutine(call) is True:
             asyncio.create_task(call)
@@ -48,4 +59,7 @@ def parser_and_run(bot_cls: type[Anya]) -> Anya:
     else:
         token = os.getenv("TOKEN")
     assert token is not None, "No token value set."
-    return bot_cls(token, create_logging_setup(dev))
+    create_logging_setup(dev)
+    return bot_cls(
+        token,
+    )

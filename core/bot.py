@@ -5,37 +5,34 @@ import os
 import typing
 
 import hikari
+import lightbulb
+import miru
 
-from core.utils import Hook
-from kai.handler import CommandHandler
-
-if typing.TYPE_CHECKING:
-    import logging
+from core.consts import Color
+from core.utils import Hook, Plugin
 
 
-class Anya(hikari.GatewayBot):
+class Anya(lightbulb.BotApp):
     hooks: dict[str, Hook] = {}
+    __version__ = "0.0.1"
 
-    def __init__(self, token: str, logger: logging.Logger) -> None:
-        super().__init__(token)
-        self.logger = logger
-        self.load_hooks("commands", dir=True)
-        self.command_handler = CommandHandler(bot=self)
-        self.event_manager.subscribe(hikari.DMMessageCreateEvent, self._create_cmd_command)
-        self.event_manager.subscribe(hikari.InteractionCreateEvent, self._process_interactions)
-        self.hooks["meta"].run(self)
+    def __init__(self, token: str) -> None:
+        super().__init__(token, intents=hikari.Intents(hikari.Intents.ALL_UNPRIVILEGED | hikari.Intents.GUILD_MEMBERS))
+        self.load_extensions_from("plugins")
+        miru.load(self)
 
     def get_me(self) -> hikari.OwnUser:
         assert (user := super().get_me()) is not None, "Self user not cached."
         return user
 
-    async def _create_cmd_command(self, event: hikari.DMMessageCreateEvent) -> None:
-        if event.content and event.content.startswith("!create"):
-            await self.command_handler.create_slash_command(event.content[8:])
+    @property
+    def plugins(self) -> typing.MutableMapping[str, Plugin]:
+        return typing.cast(typing.MutableMapping[str, Plugin], super().plugins)
 
-    async def _process_interactions(self, event: hikari.InteractionCreateEvent) -> None:
-        if event.interaction.type is hikari.InteractionType.APPLICATION_COMMAND:
-            await self.command_handler.run_commands(typing.cast(hikari.CommandInteraction, event.interaction))
+    def meta_embed(self, description: str) -> hikari.Embed:
+        return hikari.Embed(description=description, color=Color.ANYA).set_footer(
+            text=f"ANYA | v{self.__version__}", icon=self.get_me().display_avatar_url
+        )
 
     def load_hooks(self, _loc: str, *, dir: bool = False) -> None:
         if dir is False:
