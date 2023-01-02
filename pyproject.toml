@@ -12,6 +12,8 @@ hikari = "^2.0.0.dev113"
 asyncpg = "^0.27.0"
 python-dotenv = "^0.21.0"
 attrs = "^22.2.0"
+hikari-lightbulb = "^2.3.1"
+hikari-miru = "^2.0.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.12.0"
@@ -26,6 +28,7 @@ pythonVersion = "3.10"
 typeCheckingMode = "strict"
 reportPrivateUsage = false
 reportImportCycles = false
+reportIncompatibleMethodOverride = false
 
 [tool.black]
 line-length = 120
