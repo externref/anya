@@ -34,6 +34,11 @@ class Anya(lightbulb.BotApp):
     def plugins(self) -> typing.MutableMapping[str, Plugin]:
         return typing.cast(typing.MutableMapping[str, Plugin], super().plugins)
 
+    def run(self) -> None:
+        super().run(
+            activity=hikari.Activity(name="waku waku!", type=hikari.ActivityType.PLAYING), status=hikari.Status.IDLE
+        )
+
     def meta_embed(self, description: str) -> hikari.Embed:
         return hikari.Embed(description=description, color=Color.ANYA).set_footer(
             text=f"ANYA | v{self.__version__}", icon=self.get_me().display_avatar_url
