@@ -445,6 +445,25 @@ hikari = ">=2.0.0.dev113"
 docs = ["furo (>=2022.1.2,<2022.2.0)", "sphinx (==4.4.0)"]
 
 [[package]]
+name = "hikari-toolbox"
+version = "0.1.4"
+description = "Utility functions for hikari, a Discord API wrapper."
+category = "main"
+optional = false
+python-versions = ">=3.8.0,<3.11"
+files = [
+    {file = "hikari-toolbox-0.1.4.tar.gz", hash = "sha256:945800cf3080a53a9c89d45fb0f3a24eb4de564ff5b870bbf3f57ac0f9353c10"},
+    {file = "hikari_toolbox-0.1.4-py3-none-any.whl", hash = "sha256:b5c5fc6116ed710bed093f6cba78f138be9984347c03ae1ad7b91af0b1eeb672"},
+]
+
+[package.dependencies]
+colorama = {version = "*", markers = "sys_platform == \"win32\""}
+hikari = ">=2.0.0.dev113"
+
+[package.extras]
+docs = ["furo (>=2022.1.2,<2022.2.0)", "sphinx (==4.4.0)"]
+
+[[package]]
 name = "idna"
 version = "3.4"
 description = "Internationalized Domain Names in Applications (IDNA)"
@@ -741,5 +760,5 @@ multidict = ">=4.0"
 
 [metadata]
 lock-version = "2.0"
-python-versions = ">=3.10,<3.12"
-content-hash = "d283abb139203ae30e142961ee9a0fea6e4401a96f7c7d5c49321e5d21308021"
+python-versions = ">=3.10,<3.11"
+content-hash = "8e0ea84ef47b3def9d0f11ce67de306ea177c82cd40b85e9c84801202c8d2779"

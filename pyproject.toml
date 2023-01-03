@@ -1,19 +1,20 @@
 [tool.poetry]
 name = "anya"
 version = "0.1.0"
-description = "A cool stoody bot for your discord servers."
+description = "A general purpose discord bot."
 authors = ["sarthhh <shiva02939@gmail.com>"]
-license = "MIT"
+license = "MIT License"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.12"
+python = ">=3.10,<3.11"
 hikari = "^2.0.0.dev113"
 asyncpg = "^0.27.0"
 python-dotenv = "^0.21.0"
 attrs = "^22.2.0"
 hikari-lightbulb = "^2.3.1"
 hikari-miru = "^2.0.1"
+hikari-toolbox = "^0.1.4"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.12.0"
