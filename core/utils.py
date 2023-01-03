@@ -7,13 +7,14 @@ import os
 import typing
 
 import attrs
+import dotenv
 import lightbulb
 
 from core.logging import create_logging_setup
 
 if typing.TYPE_CHECKING:
     from core.bot import Anya
-
+dotenv.load_dotenv()  # type: ignore
 parser = argparse.ArgumentParser(prog="Anya!", usage="python -m . *args", description="Debug tools yuh")
 parser.add_argument("-d", "--dev", action="store_true", help="Provide for dev mode ( will use dev token ).")
 
