@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS greetings (
     guild_id BIGINT PRIMARY KEY NOT NULL,
-    accent_color INT,
-    ignore_bots BOOLEAN,
+    accent_color INT DEFAULT 0,
+    ignore_bots BOOLEAN DEFAULT false,
 
     welcome_channel_id BIGINT,
     goodbye_channel_id BIGINT,
