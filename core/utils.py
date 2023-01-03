@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import asyncio
+import contextlib
 import inspect
+import io
 import os
 import typing
 
@@ -48,6 +51,39 @@ class Hook:
 
     def add_to_bot(self, bot: Anya) -> None:
         bot.hooks[self.name] = self
+
+
+class Eval:
+    def add_returns(self, body: typing.Any) -> None:
+        if isinstance(body[-1], ast.Expr):
+            body[-1] = ast.Return(body[-1].value)
+            ast.fix_missing_locations(body[-1])
+
+        # for if statements, we insert returns into the body and the orelse
+        if isinstance(body[-1], ast.If):
+            self.add_returns(body[-1].body)
+            self.add_returns(body[-1].orelse)
+
+        # for with blocks, again we insert returns into the body
+        if isinstance(body[-1], ast.With):
+            self.add_returns(body[-1].body)
+
+    async def f_eval(self, *, code: str, renv: dict[str, typing.Any]) -> typing.Any:
+        _fn_name = "anya_eval"
+        code = "\n".join(f"    {i}" for i in code.strip().splitlines())
+        stdout = io.StringIO()
+        stderr = io.StringIO()
+        try:
+            parsed: typing.Any = ast.parse(f"async def {_fn_name}():\n{code}")
+            self.add_returns(parsed.body[0].body)
+            exec(compile(parsed, filename="<ast>", mode="exec"), renv)
+            fn = renv[_fn_name]
+            with contextlib.redirect_stdout(stdout):
+                with contextlib.redirect_stderr(stderr):
+                    await fn()
+        except Exception as e:
+            return stdout.getvalue(), stderr.getvalue() + str(e)
+        return stdout.getvalue(), stderr.getvalue()
 
 
 def parser_and_run(bot_cls: type[Anya]) -> Anya:
