@@ -2,7 +2,7 @@ import typing
 
 import hikari
 
-INVITE_URL = "https://discord.com/api/oauth2/authorize?client_id=979906554188939264&permissions={perms}&scope=bot%20applications.commands"
+INVITE_URL = "https://discord.com/api/oauth2/authorize?client_id=979906554188939264&permissions={perms}&scope=bot%20applications.commands"  # noqa: e501
 
 
 @typing.final
@@ -26,3 +26,18 @@ class ImageURLs:
     BANNER = "https://i.imgur.com/bTPsA9q.png"
     INVITE = "https://i.imgur.com/PzH7LYF.png"
     COMMANDS = "https://i.imgur.com/c48SdPK.png"
+
+
+ALLOWED_GREETING_VARS_STR: str = "\n".join(
+    ALLOWED_GREETING_VARS := [
+        "member",
+        "member_name",
+        "member_disriminator",
+        "member_id",
+        "member_avatar",
+        "member_creation_timestamp",
+        "current_timestamp",
+        "server_name",
+        "member_count",
+    ]
+)
