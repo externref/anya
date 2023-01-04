@@ -4,6 +4,7 @@ import argparse
 import ast
 import asyncio
 import contextlib
+import datetime
 import inspect
 import io
 import os
@@ -11,25 +12,20 @@ import typing
 
 import attrs
 import dotenv
+import hikari
 import lightbulb
+import toolbox
 
 from core.logging import create_logging_setup
 
 if typing.TYPE_CHECKING:
     from core.bot import Anya
+
 dotenv.load_dotenv()  # type: ignore
+
+
 parser = argparse.ArgumentParser(prog="Anya!", usage="python -m . *args", description="Debug tools yuh")
 parser.add_argument("-d", "--dev", action="store_true", help="Provide for dev mode ( will use dev token ).")
-
-
-class Plugin(lightbulb.Plugin):
-    def __init__(self, name: str, description: str, pos: int):
-        self.pos = pos
-        super().__init__(name, description)
-
-    @property
-    def bot(self) -> Anya:
-        return typing.cast("Anya", super().bot)
 
 
 @attrs.define(kw_only=True)
@@ -51,6 +47,32 @@ class Hook:
 
     def add_to_bot(self, bot: Anya) -> None:
         bot.hooks[self.name] = self
+
+
+class Plugin(lightbulb.Plugin):
+    def __init__(self, name: str, description: str, pos: int):
+        self.pos = pos
+        super().__init__(name, description)
+
+    @property
+    def bot(self) -> Anya:
+        return typing.cast("Anya", super().bot)
+
+
+def format_greeting(msg: str, member: hikari.User, guild: hikari.Guild) -> str:
+    return msg.format(
+        **{
+            "member": str(member),
+            "member_name": member.username,
+            "member_discriminator": member.discriminator,
+            "member_id": member.id,
+            "member_avatar": member.display_avatar_url.url,
+            "server_name": guild.name,
+            "member_creation_timestamp": toolbox.format_dt(member.created_at),
+            "current_timestamp": toolbox.format_dt(datetime.datetime.utcnow().astimezone()),
+            "member_count": len(guild.get_members()),
+        }
+    )
 
 
 class Eval:
