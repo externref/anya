@@ -13,6 +13,7 @@ plugin = Plugin("admin", "interal stuff", 0)
 
 
 @plugin.command
+@lightbulb.add_checks(lightbulb.owner_only)
 @lightbulb.command("Eval code", description="Evals code", guilds=(1035202799446794280,), pass_options=True)
 @lightbulb.implements(lightbulb.MessageCommand)
 async def command(ctx: lightbulb.MessageContext, target: hikari.Message) -> None:
