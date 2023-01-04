@@ -125,6 +125,21 @@ files = [
 frozenlist = ">=1.1.0"
 
 [[package]]
+name = "aoi"
+version = "0.1.1"
+description = "SQLITE3 CLI wrapper build on python."
+category = "dev"
+optional = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "aoi-0.1.1-py3-none-any.whl", hash = "sha256:e1d4608d556791dd5d4503b2497a2bbe3e5863c4e16b3151b75c50902283df88"},
+    {file = "aoi-0.1.1.tar.gz", hash = "sha256:a0bd9fe541445eb8a0b9c46926a0bfe699d94745cf324a8fd4568dd6981d1e7e"},
+]
+
+[package.dependencies]
+colorama = ">=0.4.6,<0.5.0"
+
+[[package]]
 name = "async-timeout"
 version = "4.0.2"
 description = "Timeout context manager for asyncio programs"
@@ -761,4 +776,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.11"
-content-hash = "8e0ea84ef47b3def9d0f11ce67de306ea177c82cd40b85e9c84801202c8d2779"
+content-hash = "ed71efd7f73ceff644e0d0517b61c83bbef5f64b117effb50d74dda8f6b0b0aa"
