@@ -11,7 +11,7 @@ import toolbox
 from components.views import GreetingMessageView
 from core.consts import ALLOWED_GREETING_VARS_STR, Color
 from core.objects import GreetingsData
-from core.utils import Hook, Plugin, format_greeting
+from core.utils import Hook, Plugin, command, format_greeting
 
 if typing.TYPE_CHECKING:
     from core.bot import Anya
@@ -35,7 +35,7 @@ plugin.add_checks(ensure_existence | lightbulb.checks.has_guild_permissions(hika
 
 
 @plugin.command
-@lightbulb.command("greetings", "Add welcome/leave configs.")
+@command("greetings", "Add welcome/leave configs.")
 @lightbulb.implements(lightbulb.SlashCommandGroup)
 async def greetings(_):
     ...
@@ -46,7 +46,7 @@ async def greetings(_):
     "channel", "Channel for messages.", type=hikari.GuildChannel, channel_types=[hikari.ChannelType.GUILD_TEXT]
 )
 @lightbulb.option("category", "Greeting category to set channel for.", choices=["welcome", "goodbye"])
-@lightbulb.command("channel", "Channel for welcome/leave messages.", pass_options=True)
+@command("channel", "Channel for welcome/leave messages.", pass_options=True)
 @lightbulb.implements(lightbulb.SlashSubCommand)
 async def channel(context: lightbulb.SlashContext, channel: hikari.InteractionChannel, category: str) -> None:
     await context.interaction.create_initial_response(hikari.ResponseType.DEFERRED_MESSAGE_CREATE)
@@ -79,7 +79,7 @@ async def channel(context: lightbulb.SlashContext, channel: hikari.InteractionCh
 @greetings.child
 @lightbulb.option("color", "New embed accent color.", required=False)
 @lightbulb.option("ignore_bots", "Set to True to ignore messages for bot users.", bool, required=False)
-@lightbulb.command("basic_config", "Edit the base server config for greetings.", pass_options=True)
+@command("basic_config", "Edit the base server config for greetings.", pass_options=True)
 @lightbulb.implements(lightbulb.SlashSubCommand)
 async def configs(context: lightbulb.SlashContext, ignore_bots: bool | None, color: str | None) -> None:
     pool = plugin.bot.db.pool
@@ -119,7 +119,7 @@ async def configs(context: lightbulb.SlashContext, ignore_bots: bool | None, col
 
 
 @greetings.child
-@lightbulb.command("configs", "Check server's greetings configs.")
+@command("configs", "Check server's greetings configs.")
 @lightbulb.implements(lightbulb.SlashSubCommand)
 async def configs_cmd(context: lightbulb.SlashContext) -> None:
     # fmt: off
@@ -130,7 +130,7 @@ async def configs_cmd(context: lightbulb.SlashContext) -> None:
     # fmt: on
     guild = context.get_guild() or await plugin.bot.rest.fetch_guild(context.guild_id or 0)
     embed = (
-        hikari.Embed(
+        plugin.bot.meta_embed(
             description="\n".join(
                 [
                     f"`Server ID`: {configs.guild_id}",
@@ -152,7 +152,7 @@ async def configs_cmd(context: lightbulb.SlashContext) -> None:
 
 @greetings.child
 @lightbulb.option("category", "Greeting category to set channel for.", choices=["welcome", "goodbye"])
-@lightbulb.command("message", "Update greeting message", pass_options=True)
+@command("message", "Update greeting message", pass_options=True)
 @lightbulb.implements(lightbulb.SlashSubCommand)
 async def message(context: lightbulb.SlashContext, category: typing.Literal["welcome", "goodbye"]) -> None:
 
@@ -168,7 +168,7 @@ async def message(context: lightbulb.SlashContext, category: typing.Literal["wel
 
 @greetings.child
 @lightbulb.option("category", "Greeting category to set channel for.", choices=["welcome", "goodbye"])
-@lightbulb.command("mock", "Mock a welcome or goodbye.", pass_options=True)
+@command("mock", "Mock a welcome or goodbye.", pass_options=True)
 @lightbulb.implements(lightbulb.SlashSubCommand)
 async def mock(context: lightbulb.SlashContext, category: typing.Literal["welcome", "goodbye"]) -> None:
     member: hikari.Member = context.member or await plugin.bot.rest.fetch_member(

@@ -19,12 +19,17 @@ class Anya(lightbulb.BotApp):
 
     def __init__(self, token: str) -> None:
         super().__init__(token, intents=hikari.Intents(hikari.Intents.ALL_UNPRIVILEGED | hikari.Intents.GUILD_MEMBERS))
+
         self.load_extensions_from("plugins")
         miru.load(self)
         self.event_manager.subscribe(hikari.StartingEvent, self.setup_hook)
 
     async def setup_hook(self, _: typing.Any) -> None:
         self.db = await DatabaseModel().setup(self)
+        [
+            lightbulb.check_exempt(lambda c: c.author.id in self.owner_ids)(command)  # type: ignore
+            for command in self.slash_commands.values()
+        ]
 
     def get_me(self) -> hikari.OwnUser:
         assert (user := super().get_me()) is not None, "Self user not cached."
@@ -39,8 +44,8 @@ class Anya(lightbulb.BotApp):
             activity=hikari.Activity(name="waku waku!", type=hikari.ActivityType.PLAYING), status=hikari.Status.IDLE
         )
 
-    def meta_embed(self, description: str) -> hikari.Embed:
-        return hikari.Embed(description=description, color=Color.ANYA).set_footer(
+    def meta_embed(self, description: str, color: hikari.Color | int = Color.ANYA) -> hikari.Embed:
+        return hikari.Embed(description=description, color=color).set_footer(
             text=f"ANYA | v{self.__version__}", icon=self.get_me().display_avatar_url
         )
 

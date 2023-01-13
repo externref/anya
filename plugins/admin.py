@@ -5,7 +5,7 @@ import typing
 import hikari
 import lightbulb
 
-from core.utils import Eval, Hook, Plugin
+from core.utils import Eval, Hook, Plugin, command
 
 if typing.TYPE_CHECKING:
     from core.bot import Anya
@@ -14,9 +14,9 @@ plugin = Plugin("admin", "interal stuff", 0)
 
 @plugin.command
 @lightbulb.add_checks(lightbulb.owner_only)
-@lightbulb.command("Eval code", description="Evals code", guilds=(1035202799446794280,), pass_options=True)
+@command("Eval code", description="Evals code", guilds=(1035202799446794280,), pass_options=True)
 @lightbulb.implements(lightbulb.MessageCommand)
-async def command(ctx: lightbulb.MessageContext, target: hikari.Message) -> None:
+async def eval_command(ctx: lightbulb.MessageContext, target: hikari.Message) -> None:
     _eval = Eval()
     if (code := target.content or "").startswith("```py"):
         code = code.replace("```py\n", "").replace("\n```", "")

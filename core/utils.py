@@ -59,6 +59,12 @@ class Plugin(lightbulb.Plugin):
         return typing.cast("Anya", super().bot)
 
 
+def command(
+    name: str, description: str, **kwargs: typing.Any
+) -> typing.Callable[[lightbulb.decorators.CommandCallbackT], lightbulb.CommandLike]:  # type: ignore
+    return lightbulb.command(name, description, app_command_dm_enabled=False, **kwargs)
+
+
 def format_greeting(msg: str, member: hikari.User, guild: hikari.Guild) -> str:
     return msg.format(
         **{

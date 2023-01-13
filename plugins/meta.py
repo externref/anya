@@ -8,7 +8,7 @@ import lightbulb
 import miru
 
 from core.consts import INVITE_URL, Chars, ImageURLs
-from core.utils import Hook, Plugin
+from core.utils import Hook, Plugin, command
 
 if typing.TYPE_CHECKING:
     from core.bot import Anya
@@ -16,7 +16,7 @@ plugin = Plugin("Meta", "General bot commands.", 1)
 
 
 @plugin.command
-@lightbulb.command("ping", "Check bot latencies.")
+@command("ping", "Check bot latencies.")
 @lightbulb.implements(lightbulb.SlashCommand)
 async def ping(context: lightbulb.SlashContext) -> None:
     initial = time.perf_counter()
@@ -36,7 +36,7 @@ async def ping(context: lightbulb.SlashContext) -> None:
 
 @plugin.command
 @lightbulb.option("admin", "Set to true to invite bot with admin perms.", type=bool, default=False)
-@lightbulb.command("invite", "Add the bot to your servers!.", pass_options=True)
+@command("invite", "Add the bot to your servers!.", pass_options=True)
 @lightbulb.implements(lightbulb.SlashCommand)
 async def invite(context: lightbulb.SlashContext, admin: bool) -> None:
     view = miru.View().add_item(
