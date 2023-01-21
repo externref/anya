@@ -27,15 +27,11 @@ class Anya(lightbulb.BotApp):
         )
 
         self.load_extensions_from("plugins")
-        miru.load(self)
+        miru.install(self)
         self.event_manager.subscribe(hikari.StartingEvent, self.setup_hook)
 
     async def setup_hook(self, _: typing.Any) -> None:
         self.db = await DatabaseModel().setup(self)
-        [
-            lightbulb.check_exempt(lambda c: c.author.id in self.owner_ids)(command)  # type: ignore
-            for command in self.slash_commands.values()
-        ]
 
     def get_me(self) -> hikari.OwnUser:
         assert (user := super().get_me()) is not None, "Self user not cached."

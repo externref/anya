@@ -20,7 +20,6 @@ async def eval_command(ctx: lightbulb.MessageContext, target: hikari.Message) ->
     _eval = Eval()
     if (code := target.content or "").startswith("```py"):
         code = code.replace("```py\n", "").replace("\n```", "")
-    print(code, target.content)
     data = await _eval.f_eval(code=code, renv={"bot": plugin.bot, "ctx": ctx})
     await ctx.respond(f"```\n{data}\n```")
 

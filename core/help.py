@@ -52,7 +52,6 @@ class Help(lightbulb.BaseHelpCommand):
                     )
                 elif isinstance(command, lightbulb.SlashCommand):
                     builder.write(command.name, ANSI.BLUE_TEXT)
-            print(builder.bucket)
             embed.add_field(f"{p_name.title()} Commands", builder.get_str(codeblock=True, join=", "))
         assert embed.description is not None
         return embed

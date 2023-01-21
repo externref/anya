@@ -203,7 +203,6 @@ async def mock(context: lightbulb.SlashContext, category: typing.Literal["welcom
 
 @plugin.listener(hikari.MemberCreateEvent)
 async def new_member(event: hikari.MemberCreateEvent) -> None:
-    print("triggered")
     configs = (
         GreetingsData(**dict(data))  # type: ignore
         if (
@@ -214,7 +213,6 @@ async def new_member(event: hikari.MemberCreateEvent) -> None:
         else None
     )
     if configs is None:
-        print("no data")
         return
     if configs.welcome_channel_id is not None:
         try:
