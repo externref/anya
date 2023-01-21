@@ -30,8 +30,22 @@ async def ensure_existence(context: lightbulb.Context | hikari.Member) -> bool:
     return True
 
 
-plugin = Plugin("greetings", "Greet your users!", 3)
+plugin = Plugin("member", "Commands related to members in the server.", 2)
 plugin.add_checks(ensure_existence | lightbulb.checks.has_guild_permissions(hikari.Permissions.MANAGE_GUILD))
+
+
+@plugin.command
+@command("member_count", "Number of members in the server.")
+@lightbulb.implements(lightbulb.SlashCommand)
+async def m_count(context: lightbulb.Context) -> None:
+    members = plugin.bot.cache.get_members_view_for_guild(context.guild_id or 0)
+    humans = [m for m in members.values() if m.is_bot is False]
+    bots = [m for m in members.values() if m.is_bot is True]
+    await context.respond(
+        embed=hikari.Embed(
+            color=Color.GREEN, description=f"Total: {len(members)}\nHumans: {len(humans)}\nBots: {len(bots)}"
+        )
+    )
 
 
 @plugin.command

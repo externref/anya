@@ -9,7 +9,7 @@ from core.utils import Eval, Hook, Plugin, command
 
 if typing.TYPE_CHECKING:
     from core.bot import Anya
-plugin = Plugin("admin", "interal stuff", 0)
+plugin = Plugin("admin", "interal stuff", 0, hide=True)
 
 
 @plugin.command

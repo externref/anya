@@ -5,6 +5,7 @@ import ast
 import asyncio
 import contextlib
 import datetime
+import enum
 import inspect
 import io
 import os
@@ -14,6 +15,7 @@ import attrs
 import dotenv
 import hikari
 import lightbulb
+import miru
 import toolbox
 
 from core.logging import create_logging_setup
@@ -50,9 +52,27 @@ class Hook:
 
 
 class Plugin(lightbulb.Plugin):
-    def __init__(self, name: str, description: str, pos: int):
+    def __init__(self, name: str, description: str, pos: int, hide: bool = False):
         self.pos = pos
+        self.hidden = hide
         super().__init__(name, description)
+
+    @property
+    def bot(self) -> Anya:
+        return typing.cast("Anya", super().bot)
+
+
+class BaseView(miru.View):
+    bound_to: int
+
+    async def view_check(self, context: miru.ViewContext) -> bool:
+        if context.author.id != self.bound_to:
+            await context.respond(
+                self.bot.fail_embed(f"The help session was started by <@{self.bound_to}>, only they can navigate."),
+                flags=hikari.MessageFlag.EPHEMERAL,
+            )
+            return False
+        return True
 
     @property
     def bot(self) -> Anya:
@@ -128,3 +148,38 @@ def parser_and_run(bot_cls: type[Anya]) -> Anya:
     return bot_cls(
         token,
     )
+
+
+class ANSI(enum.IntEnum):
+    NORMAL_FORMAT = 0
+    BOLD_FORMAT = 1
+    UNDERLINE_FORMAT = 4
+    GRAY_TEXT = 30
+    RED_TEXT = 31
+    GREEN_TEXT = 32
+    YELLOW_TEXT = 33
+    BLUE_TEXT = 34
+    PINK_TEXT = 35
+    CYAN_TEXT = 36
+    WHITE_TEXT = 37
+    FIREFLY_DARK_BLUE_BACKGROUND = 40
+    ORANGE_BACKGROUND = 41
+    MARBLE_BLUE_BACKGROUND = 42
+    GREYISH_TURQUOISE_BACKGROUND = 43
+    GRAY_BACKGROUND = 44
+    INDIGO_BACKGROUND = 45
+    LIGHT_GRAY_BACKGROUND = 46
+    WHITE_BACKGROUND = 0
+
+
+class ANSIBuilder:
+    def __init__(self) -> None:
+        self.bucket: list[str] = []
+
+    def write(self, text: str, *ansi: ANSI | int) -> ANSIBuilder:
+        _ansi = ";".join(map(lambda arg: str(arg.value) if isinstance(arg, ANSI) else str(arg), ansi))
+        self.bucket.append(f"\033[{_ansi}m{text}\033[0m")
+        return self
+
+    def get_str(self, *, join: str = "", codeblock: bool = False) -> str:
+        return f"```ansi\n{join.join(self.bucket)}\n```" if codeblock is True else ", ".join(self.bucket)

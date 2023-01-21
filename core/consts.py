@@ -13,6 +13,14 @@ class Color:
 
 
 @typing.final
+class Emojis:
+    PREVIOUS = hikari.CustomEmoji.parse("<:previous:1066275900473233489>")
+    NEXT = hikari.CustomEmoji.parse("<:next:1066276075023384586>")
+    DUSTBIN = hikari.CustomEmoji.parse("<:dustbin:1066277926347218964>")
+    HOME = hikari.CustomEmoji.parse("<:home:1066250458089410630>")
+
+
+@typing.final
 class Chars:
     PING_PONG = "\U0001f3d3"
     DIAMOND_DOT = "\U0001f4a0"

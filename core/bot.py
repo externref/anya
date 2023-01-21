@@ -10,6 +10,7 @@ import miru
 
 from core.consts import Chars, Color
 from core.database import DatabaseModel
+from core.help import Help
 from core.utils import Hook, Plugin
 
 
@@ -18,7 +19,12 @@ class Anya(lightbulb.BotApp):
     __version__ = "0.0.1"
 
     def __init__(self, token: str) -> None:
-        super().__init__(token, intents=hikari.Intents(hikari.Intents.ALL_UNPRIVILEGED | hikari.Intents.GUILD_MEMBERS))
+        super().__init__(
+            token,
+            intents=hikari.Intents(hikari.Intents.ALL_UNPRIVILEGED | hikari.Intents.GUILD_MEMBERS),
+            help_class=Help,
+            help_slash_command=True,
+        )
 
         self.load_extensions_from("plugins")
         miru.load(self)
