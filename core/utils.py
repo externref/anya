@@ -88,15 +88,15 @@ def command(
 def format_greeting(msg: str, member: hikari.User, guild: hikari.Guild) -> str:
     return msg.format(
         **{
-            "member": str(member),
-            "member_name": member.username,
-            "member_discriminator": member.discriminator,
-            "member_id": member.id,
-            "member_avatar": member.display_avatar_url.url,
-            "server_name": guild.name,
-            "member_creation_timestamp": toolbox.format_dt(member.created_at),
-            "current_timestamp": toolbox.format_dt(datetime.datetime.utcnow().astimezone()),
-            "member_count": len(guild.get_members()),
+            "#member": str(member),
+            "#member_name": member.username,
+            "#member_discriminator": member.discriminator,
+            "#member_id": member.id,
+            "#member_avatar": member.display_avatar_url.url,
+            "#server_name": guild.name,
+            "#member_creation_timestamp": toolbox.format_dt(member.created_at),
+            "#current_timestamp": toolbox.format_dt(datetime.datetime.utcnow().astimezone()),
+            "#member_count": len(guild.get_members()),
         }
     )
 

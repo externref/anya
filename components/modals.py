@@ -6,6 +6,7 @@ import hikari
 import miru
 
 from core.consts import Color
+from core.utils import format_greeting
 
 if typing.TYPE_CHECKING:
     from core.bot import Anya
@@ -29,8 +30,17 @@ class GreetingMessageModal(miru.Modal):
     async def callback(self, context: miru.ModalContext) -> None:
         bot = typing.cast("Anya", context.bot)
         await bot.db.pool.execute(f"UPDATE greetings SET {self.type}_message = $1", list(context.values.values())[0])  # type: ignore
-        print(list(context.values.values())[0])
-        await context.respond(embed=bot.success_embed("The message was updated!"), flags=hikari.MessageFlag.EPHEMERAL)
+        try:
+            message = format_greeting(list(context.values.values())[0], context.author, context.get_guild())  # type: ignore
+            await context.respond(
+                embeds=[
+                    bot.success_embed("The message was updated!"),
+                    hikari.Embed(title="Message Preview", description=message),
+                ],
+                flags=hikari.MessageFlag.EPHEMERAL,
+            )
+        except KeyError as e:
+            await context.respond(embed=bot.fail_embed(f"Invalid variable: {e}"), flags=hikari.MessageFlag.EPHEMERAL)
 
 
 class ConfessionModal(miru.Modal):

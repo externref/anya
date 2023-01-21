@@ -169,9 +169,11 @@ async def configs_cmd(context: lightbulb.SlashContext) -> None:
 @command("message", "Update greeting message", pass_options=True)
 @lightbulb.implements(lightbulb.SlashSubCommand)
 async def message(context: lightbulb.SlashContext, category: typing.Literal["welcome", "goodbye"]) -> None:
-
+    example = "```\nHello user welcome to {#server_name}\n```"
     res = await context.respond(
-        embed=hikari.Embed(description=f"**Allowed Variables:**\n{ALLOWED_GREETING_VARS_STR}", color=Color.ANYA),
+        embed=hikari.Embed(
+            description=f"**Allowed Variables:**\n{ALLOWED_GREETING_VARS_STR}\nExample: {example}", color=Color.ANYA
+        ),
         components=(view := GreetingMessageView(category)).build(),
         flags=hikari.MessageFlag.EPHEMERAL,
     )
@@ -201,12 +203,19 @@ async def mock(context: lightbulb.SlashContext, category: typing.Literal["welcom
 
 @plugin.listener(hikari.MemberCreateEvent)
 async def new_member(event: hikari.MemberCreateEvent) -> None:
-    # fmt: off
-    configs = GreetingsData(
-        **dict(await plugin.bot.db.pool.fetchrow("SELECT * FROM greetings WHERE guild_id = $1",  # type: ignore
-        event.guild_id))  
+    print("triggered")
+    configs = (
+        GreetingsData(**dict(data))  # type: ignore
+        if (
+            data := await plugin.bot.db.pool.fetchrow(  # type: ignore
+                "SELECT * FROM greetings WHERE guild_id = $1", event.guild_id
+            )
+        )
+        else None
     )
-    # fmt: on
+    if configs is None:
+        print("no data")
+        return
     if configs.welcome_channel_id is not None:
         try:
             await plugin.bot.rest.create_message(
@@ -228,12 +237,17 @@ async def new_member(event: hikari.MemberCreateEvent) -> None:
 
 @plugin.listener(hikari.MemberDeleteEvent)
 async def left_member(event: hikari.MemberDeleteEvent) -> None:
-    # fmt: off
-    configs = GreetingsData(
-        **dict(await plugin.bot.db.pool.fetchrow("SELECT * FROM greetings WHERE guild_id = $1",  # type: ignore
-        event.guild_id))  
+    configs = (
+        GreetingsData(**dict(data))  # type: ignore
+        if (
+            data := await plugin.bot.db.pool.fetchrow(  # type: ignore
+                "SELECT * FROM greetings WHERE guild_id = $1", event.guild_id
+            )
+        )
+        else None
     )
-    # fmt: on
+    if configs is None:
+        return
     if configs.welcome_channel_id is not None:
         try:
             await plugin.bot.rest.create_message(
