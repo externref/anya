@@ -30,3 +30,11 @@ CREATE TABLE IF NOT EXISTS confession_bans (
     user_id BIGINT NOT NULL,
     reason VARCHAR(1000) DEFAULT 'No reason provided' 
 );
+
+
+CREATE TABLE IF NOT EXISTS bot_stats (
+    _time INTEGER PRIMARY KEY NOT NULL,
+    latency DECIMAL,
+    member_count INTEGER,
+    commands_used INTEGER
+)
