@@ -21,7 +21,8 @@ async def ensure_existence(context: lightbulb.Context) -> bool:
     )
     if _id:
         return True
-    raise ConfessionConfigMissing(f"No confession channel set up for {context.guild_id}")
+    assert (g := context.get_guild()) is not None
+    raise ConfessionConfigMissing(f"No confession channel set up for {g.name}")
 
 
 plugin = Plugin("confession", "Confession system.", 3)
