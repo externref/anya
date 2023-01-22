@@ -5,11 +5,25 @@ import typing
 import hikari
 import lightbulb
 
+from core.errors import ConfessionConfigMissing
 from core.utils import Eval, Hook, Plugin, command
 
 if typing.TYPE_CHECKING:
     from core.bot import Anya
+
 plugin = Plugin("admin", "interal stuff", 0, hide=True)
+
+
+@plugin.listener(lightbulb.SlashCommandErrorEvent)
+async def on_error(event: lightbulb.SlashCommandErrorEvent) -> None:
+    exc = event.exception
+    if isinstance(exc, ConfessionConfigMissing):
+        await event.context.respond(
+            plugin.bot.fail_embed("This server has no confession channel setup yet."),
+            flags=hikari.MessageFlag.EPHEMERAL,
+        )
+    else:
+        raise exc
 
 
 @plugin.command

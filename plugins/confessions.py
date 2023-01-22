@@ -16,9 +16,6 @@ if typing.TYPE_CHECKING:
 
 @lightbulb.Check
 async def ensure_existence(context: lightbulb.Context) -> bool:
-    await plugin.bot.db.pool.execute(  # type: ignore
-        "INSERT INTO confession_configs VALUES ( $1 ) ON CONFLICT DO NOTHING", context.guild_id
-    )
     _id: int = await plugin.bot.db.pool.fetchval(  # type: ignore
         "SELECT channel_id FROM confession_configs WHERE guild_id = $1", context.guild_id
     )
@@ -54,7 +51,9 @@ async def channel(context: lightbulb.SlashContext, channel: hikari.InteractionCh
         )
         return
     await plugin.bot.db.pool.execute(  # type: ignore
-        "UPDATE confession_configs SET channel_id = $1 WHERE guild_id = $2 ", channel.id, context.guild_id
+        "INSERT INTO confession_configs (channel_id, guild_id) VALUES ($1, $2) ON CONFLICT DO UPDATE SET channel_id = $1",
+        channel.id,
+        context.guild_id,
     )
     await context.respond(plugin.bot.success_embed(f"Set confession channel to {channel.mention} (`{channel.name}`)"))
 

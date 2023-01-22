@@ -6,8 +6,8 @@ CREATE TABLE IF NOT EXISTS greetings (
     welcome_channel_id BIGINT,
     goodbye_channel_id BIGINT,
 
-    welcome_message VARCHAR(2000) DEFAULT 'Hello {member}, welcome to {#server_name}',
-    goodbye_message VARCHAR(2000) DEFAULT '{member} left.' 
+    welcome_message VARCHAR(2000) DEFAULT 'Hello {#member}, welcome to {#server_name}',
+    goodbye_message VARCHAR(2000) DEFAULT '{#member} left.' 
 );
 
 
